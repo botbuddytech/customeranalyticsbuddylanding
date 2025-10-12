@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "packages/landing/package.json",
+      "use": "@vercel/next",
+      "config": {
+        "distDir": ".next"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "packages/landing/$1"
+    }
+  ],
+  "functions": {
+    "packages/landing/pages/api/**/*.js": {
+      "runtime": "nodejs18.x"
+    }
+  }
+}

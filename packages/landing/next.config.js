@@ -1,9 +1,12 @@
 const withPlugins = require('next-compose-plugins');
 
 const nextConfig = {
-  // distDir: '../../dist/functions/next'
+  // Vercel deployment configuration
+  output: 'standalone',
+  
   images: {
     domains: ['pbs.twimg.com'],
+    unoptimized: true, // For static export compatibility
   },
   
   // SEO Optimizations
@@ -50,6 +53,24 @@ const nextConfig = {
   // Performance optimizations
   poweredByHeader: false,
   generateEtags: false,
+  
+  // Experimental features for better performance
+  experimental: {
+    // optimizeCss: true, // Disabled due to critters dependency issues
+  },
+  
+  // Webpack configuration for better builds
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+      };
+    }
+    return config;
+  },
 };
 
 module.exports = withPlugins([], nextConfig);

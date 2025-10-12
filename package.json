@@ -17,6 +17,10 @@
   ],
   "scripts": {
     "clean": "yarn workspaces run rimraf \"{.next,node_modules,.cache,out,dist}\" && rimraf node_modules",
+    "dev": "yarn workspace @superprops/next run dev",
+    "build": "yarn workspace @superprops/next run build",
+    "start": "yarn workspace @superprops/next run start",
+    "export": "yarn workspace @superprops/next run export",
     "next-dev": "yarn workspace @superprops/next run dev",
     "next-build": "yarn workspace @superprops/next run build",
     "next-start": "yarn workspace @superprops/next run start",
