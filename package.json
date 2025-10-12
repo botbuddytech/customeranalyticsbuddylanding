@@ -21,6 +21,7 @@
     "build": "yarn workspace @superprops/next run build",
     "start": "yarn workspace @superprops/next run start",
     "export": "yarn workspace @superprops/next run export",
+    "vercel-build": "yarn workspace @superprops/next run build",
     "next-dev": "yarn workspace @superprops/next run dev",
     "next-build": "yarn workspace @superprops/next run build",
     "next-start": "yarn workspace @superprops/next run start",
