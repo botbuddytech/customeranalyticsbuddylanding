@@ -43,5 +43,14 @@
   "dependencies": {
     "gatsby-plugin-mantine": "^5.0.0",
     "react-waypoint": "^10.1.0"
+  },
+  "resolutions": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "@react-aria/table": "^3.2.1"
+  },
+  "overrides": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   }
 }

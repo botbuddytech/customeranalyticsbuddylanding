@@ -1,7 +1,7 @@
 {
   "version": 2,
-  "buildCommand": "cd packages/landing && npm run build",
+  "buildCommand": "cd packages/landing && yarn build",
   "outputDirectory": "packages/landing/.next",
-  "installCommand": "npm install",
+  "installCommand": "yarn install --frozen-lockfile",
   "framework": "nextjs"
 }
