@@ -1,216 +1,111 @@
-# Installation
+# BotBuddy Customer Analytics Landing Page
 
-After downloading the file from Themeforest, You will find SuperProps.zip file. Then unzip the SuperProps.zip and run the following commands on SuperProps folder to get started with the project.
+A comprehensive landing page for BotBuddy Customer Analytics - AI-powered Shopify analytics and customer segmentation platform.
 
-```
-yarn
-```
+## Features
 
-```
-yarn next-dev
-```
+- **SEO Optimized**: Complete SEO implementation with meta tags, structured data, and Open Graph
+- **Responsive Design**: Mobile-first design that works on all devices
+- **Fast Performance**: Optimized for Core Web Vitals and fast loading
+- **PWA Support**: Progressive Web App capabilities with manifest.json
+- **Security Headers**: Comprehensive security headers implementation
+- **Legal Pages**: Privacy Policy, Terms of Service, Shipping Policy, Cancellation & Refunds
+- **Contact System**: Integrated contact form and support information
+- **Sitemap**: XML sitemap and human-readable sitemap page
 
-NextJs Server will start in `localhost:3000`
+## Pages
 
-Available routes are below
+- **Homepage**: Main landing page with product overview
+- **Contact**: Contact form and business information
+- **Privacy Policy**: GDPR-compliant privacy policy
+- **Terms of Service**: User agreement and conditions
+- **Shipping Policy**: Digital service delivery information
+- **Cancellation & Refunds**: Ultra-flexible refund policy
+- **Sitemap**: Website navigation and structure
+- **404**: Custom error page
 
-```
-/app
-/appmodern
-/appclassic
-/appminimal
-/saas
-/saasmodern
-/saasclassic
-/saasminimal
-/saasminimal2
-/hosting
-/hostingmodern
-/portfolio
-/ride
-/crypto
-/cryptomodern
-/charity
-/interior
-/agency
-/agencymodern
-/agencydigital
+## Installation
 
+After cloning the repository, run the following commands:
 
-...
+```bash
+yarn install
 ```
 
-# Folder Structure
-
-```
-/packages
-	/landing [NextJs version of the project]
+```bash
+yarn dev
 ```
 
-# Stack We Have Used
+Next.js server will start on `localhost:3000`
 
-1. Lerna (A tool for managing JavaScript projects with multiple packages. https://lernajs.io)
-2. Yarn Workspace
-3. React Js and Next Js
-4. Styled System and Styled Components
-5. Firebase Deployment.
-6. Vercel Deployment.
+## Development
 
-# Development
+### Available Scripts
 
-Follow the below procedure to go with the development process.
+- `yarn dev` - Start development server
+- `yarn build` - Build for production
+- `yarn start` - Start production server
+- `yarn lint` - Run ESLint
 
-## NextJs
-
-For example, You want to work with 'app' template .
-
-1. Go to `/landing/pages/`
-2. now copy all the content from `app.js`
-3. Paste all the content in `/landing/pages/index.js`
-
-Now for cleaning the unused code in your project follow the below procedure.
-
-1. Now you can delete all other pages except `_app.js`, `_documents.js` and `_error.js`. That mean in your `/pages` folder you will have four files `index.js`, `_app.js`, `_documents.js` and `error.js`
-2. From `/landing/containers/` folder you can delete all other folder except `App` and `Error`
-3. From `/common/assets/image/` folder you can delete all other folder except `app`. Do not delete any files from there like `404.svg`, `error.svg` etc.
-4. From `/common/data/` folder you can delete all other folder except `App`.
-5. From `/common/theme/` folder you can delete all other folder except `app`. Do not delete the `index.js` file.
-
-To start the server for `nextjs` you have to run `yarn nextjs-dev` and the server will start on `locahost:3000`.
-
-# Explaining Containers
-
-In the `containers` directory you will get folder for our every template. If you want to use App template. Then in the `App` directory you will get folders containing different section of the template like `Banner`, `Footer`, `Testimonial`, `Navbar` etc.
-
-All of these containers contains regular reactjs code.
-
-# Deployment
-
-For deploying your final project you have to build your project first. To build the project you have to follow below procedure.
-
-### NextJs
-
-To build the nextjs version run below commands.
+### Project Structure
 
 ```
-yarn next-build
-
-// To check the build version locally run below command
-// Not necessary if you don't want to check on your local.
-
-yarn next-start
+packages/landing/
+├── src/
+│   ├── pages/                 # Next.js pages
+│   ├── containers/           # React components
+│   ├── common/              # Shared components and utilities
+│   └── public/              # Static assets
+├── next.config.js           # Next.js configuration
+└── package.json            # Dependencies
 ```
 
-## Running with Docker
+## SEO Features
 
-To run the SuperProps Next.js app in docker
+- **Meta Tags**: Comprehensive meta tags for all pages
+- **Structured Data**: JSON-LD schema markup
+- **Open Graph**: Social media sharing optimization
+- **Twitter Cards**: Twitter sharing optimization
+- **Robots.txt**: Search engine crawling instructions
+- **Sitemap.xml**: XML sitemap for search engines
+- **Canonical URLs**: Proper URL canonicalization
 
-```
-yarn next-export
-docker build -t superprops/landing-next -f ./packages/landing/Dockerfile .
-docker run -it -p 3000:3000 superprops/landing-next:latest
-Open http://localhost:3000
-```
+## Deployment
 
-# Deployment Support
+### Vercel (Recommended)
 
-## vercel.com
+1. Connect your GitHub repository to Vercel
+2. Deploy automatically on every push to main branch
 
-### NextJs
+### Netlify
 
-For deploying nextjs on vercel.com go to `packages/landing`. Now run below command .
-
-```
-vercel
-```
-
-> **Make sure you have `vercel-cli` installed in your system.**
-
-## Firebase
-
-### NextJs
-
-1. yarn build
-2. Check and Update firebase.json file from `packages/landing` directory.
-
-```
-{
-  "hosting": {
-    "source": ".",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
-    "frameworksBackend": {
-      "region": "us-east1"
-    }
-  }
-}
-```
-
-3. Update next.config.js file output: "export"
-
-```
-const withPlugins = require('next-compose-plugins');
-
-const nextConfig = {
-  // distDir: '../../dist/functions/next'
-  images: {
-    domains: ['pbs.twimg.com'],
-    unoptimized: true
-  },
-  output: "export"
-};
-
-module.exports = withPlugins([], nextConfig);
-```
-
-4.  Download Firebase CLI using this command and login
-
-```
-npm install -g firebase-tools
-firebase login
-```
-
-5. Initiate your project
-
-```
-firebase init
-```
-
-```
-This process showing automatically. You need to select Y/n
-
-Are you ready to proceed? Yes
-Which Firebase features do you want to set up for this directory? Press Space to select features, then Enter to confirm your choices. Hosting: Configure files for Firebase Hosting and (optionally) set up GitHub Action deploys
-Detected an existing Next.js codebase in the current directory, should we use this? Yes
-In which region would you like to host server-side content, if applicable? us-east1 (South Carolina)
-? Set up automatic builds and deploys with GitHub? No
-```
-
-6. Final Step Deploy Project
-
-```
-firebase deploy
-```
-
-## Netlify
-
-At first, open an account on netlify and go to `sites` tab.
-
-### NextJs
-
-Run the below command to make the project netlify deploy ready from `packages/landing`.
-
-```
+```bash
+yarn build
 yarn export
 ```
 
-After running the above command go to `/landing` folder. You will find a `out` folder there. Drag
-and drop this `out` folder on netlify `sites` tab. Now after finishing the upload you are ready to go.
-# app1
-# app1
-# app1landing
-# app1landing
-# app1landing
+Upload the `out` folder to Netlify.
+
+### Firebase
+
+```bash
+yarn build
+firebase deploy
+```
+
+## Technologies Used
+
+- **Next.js 13**: React framework with App Router
+- **React**: Component-based UI library
+- **Styled Components**: CSS-in-JS styling
+- **TypeScript**: Type-safe JavaScript
+- **ESLint**: Code linting and formatting
+- **Prettier**: Code formatting
+
+## License
+
+This project is licensed under the MIT License.
+
+## Support
+
+For support, email botbuddyteam@gmail.com or call +91 9669664421.
