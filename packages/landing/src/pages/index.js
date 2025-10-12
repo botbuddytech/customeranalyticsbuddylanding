@@ -28,9 +28,43 @@ const webAppCreative = () => {
 	<ThemeProvider theme={theme}>
 	  <Fragment>
 		<Head>
-		  <title>Web App Creative | A react next landing page</title>
-		  <meta name="Description" content="React next landing page" />
-		  <meta name="theme-color" content="#ec5555" />
+		  <title>BotBuddy Customer Analytics - AI-Powered Shopify Analytics & Customer Segmentation</title>
+		  <meta name="description" content="Transform your Shopify store with BotBuddy Customer Analytics. Get AI-powered insights, customer segmentation, and automated marketing campaigns to boost sales and retention. Free trial available." />
+		  <meta name="keywords" content="Shopify analytics, customer segmentation, AI insights, e-commerce analytics, customer retention, marketing automation, Shopify app, customer behavior analysis" />
+		  <meta name="theme-color" content="#95bf47" />
+		  
+		  {/* Structured Data for Organization */}
+		  <script
+			type="application/ld+json"
+			dangerouslySetInnerHTML={{
+			  __html: JSON.stringify({
+				"@context": "https://schema.org",
+				"@type": "SoftwareApplication",
+				"name": "BotBuddy Customer Analytics",
+				"description": "AI-powered Shopify analytics and customer segmentation platform",
+				"url": "https://botbuddy-analytics.com",
+				"applicationCategory": "BusinessApplication",
+				"operatingSystem": "Web",
+				"offers": {
+				  "@type": "Offer",
+				  "price": "0",
+				  "priceCurrency": "USD",
+				  "description": "Free trial available"
+				},
+				"provider": {
+				  "@type": "Organization",
+				  "name": "BotBuddy Team",
+				  "url": "https://botbuddy-analytics.com",
+				  "contactPoint": {
+					"@type": "ContactPoint",
+					"email": "botbuddyteam@gmail.com",
+					"telephone": "+91-9669664421"
+				  }
+				}
+			  })
+			}}
+		  />
+		  
 		  {/* Load google fonts */}
 		  <link rel="preconnect" href="https://fonts.gstatic.com" />
 		  <link

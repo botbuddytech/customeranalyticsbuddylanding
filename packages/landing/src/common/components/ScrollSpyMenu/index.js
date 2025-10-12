@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import PropTypes from "prop-types";
 import Scrollspy from "react-scrollspy";
 import AnchorLink from "react-anchor-link-smooth-scroll";
+import Link from "next/link";
 
 import { DrawerContext } from "../../contexts/DrawerContext";
 import NextImage from "../NextImage";
@@ -14,12 +15,12 @@ const RenderLinkWithIcon = ({ menu }) => {
 			) : (
 				""
 			)}
-			<a
+			<Link
 				className={menu.icon ? "icon-label" : "no-icon-label"}
 				href={menu.path}
 			>
 				{menu.label}
-			</a>
+			</Link>
 		</div>
 	);
 };
@@ -59,7 +60,17 @@ const ScrollSpyMenu = ({ className, menuItems, drawerClose, ...props }) => {
 			{menuItems.map((menu, index) => (
 				<li key={`menu-item-${index}`}>
 					{menu.staticLink ? (
-						<RenderLinkWithIcon menu={menu} />
+						<>
+							{drawerClose ? (
+								<Link href={menu.path} onClick={toggleDrawer}>
+									{menu.label}
+								</Link>
+							) : (
+								<Link href={menu.path}>
+									{menu.label}
+								</Link>
+							)}
+						</>
 					) : (
 						<>
 							{drawerClose ? (

@@ -1,0 +1,27 @@
+{
+  "name": "BotBuddy Customer Analytics",
+  "short_name": "BotBuddy Analytics",
+  "description": "AI-powered Shopify analytics and customer segmentation platform",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#95bf47",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity", "analytics"],
+  "lang": "en-US",
+  "dir": "ltr"
+}

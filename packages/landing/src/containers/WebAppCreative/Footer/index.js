@@ -50,13 +50,22 @@ const Footer = () => {
             </InfoItem>
             <InfoItem>
               <Icon icon={ic_phone} size={26} className="phone-icon" />
-              <div>
-                <Text
-                  className="phone-number"
-                  content={footerTop.contactInfo.phone}
-                />
-                <Text content={footerTop.contactInfo.openingTime} />
-              </div>
+              <Text
+                className="phone-number"
+                content={footerTop.contactInfo.phone}
+              />
+            </InfoItem>
+            <InfoItem>
+              <Icon icon={ic_place} size={24} />
+              <Link href="/shipping-policy" style={{ textDecoration: 'none', color: 'inherit' }}>
+                <Text content="Shipping Policy" style={{ color: '#95bf47', fontWeight: '600' }} />
+              </Link>
+            </InfoItem>
+            <InfoItem>
+              <Icon icon={ic_place} size={24} />
+              <Link href="/cancellation-refunds" style={{ textDecoration: 'none', color: 'inherit' }}>
+                <Text content="Cancellation & Refunds" style={{ color: '#95bf47', fontWeight: '600' }} />
+              </Link>
             </InfoItem>
             <InfoItem>
               <Icon icon={paperPlane} size={22} />

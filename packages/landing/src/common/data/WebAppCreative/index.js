@@ -66,6 +66,66 @@ export const menu_items = [
     path: '#faq',
     offset: '70',
   },
+  {
+    label: 'Contact',
+    path: '/contact',
+    offset: '0',
+    staticLink: true,
+  },
+];
+
+export const contact_menu_items = [
+  {
+    label: 'Home',
+    path: '/',
+    offset: '0',
+    staticLink: true,
+  },
+  {
+    label: 'Contact',
+    path: '/contact',
+    offset: '0',
+    staticLink: true,
+  },
+];
+
+export const new_pages_menu_items = [
+  {
+    label: 'Home',
+    path: '/',
+    offset: '0',
+    staticLink: true,
+  },
+  {
+    label: 'Features',
+    path: '/#features',
+    offset: '0',
+    staticLink: true,
+  },
+  {
+    label: 'Testimonial',
+    path: '/#testimonial',
+    offset: '0',
+    staticLink: true,
+  },
+  {
+    label: 'Pricing',
+    path: '/#pricing',
+    offset: '0',
+    staticLink: true,
+  },
+  {
+    label: 'Faq',
+    path: '/#faq',
+    offset: '0',
+    staticLink: true,
+  },
+  {
+    label: 'Contact',
+    path: '/contact',
+    offset: '0',
+    staticLink: true,
+  },
 ];
 
 export const clients = [envato, evernote, forbes, geekwire, slack, usaToday];
@@ -462,8 +522,8 @@ export const footerTop = {
       list: [
         {
           id: 1,
-          title: 'Support Center',
-          link: '#',
+          title: 'Contact',
+          link: '/contact',
         },
         {
           id: 2,
@@ -499,17 +559,17 @@ export const footerTop = {
         {
           id: 2,
           title: 'Privacy Policy',
-          link: '#',
+          link: '/privacy-policy',
         },
         {
           id: 3,
           title: 'Terms & Conditions',
-          link: '#',
+          link: '/terms-of-service',
         },
         {
           id: 4,
           title: 'Site Map',
-          link: '#',
+          link: '/sitemap',
         },
         {
           id: 5,
@@ -564,8 +624,8 @@ export const footer = {
   nav: [
     {
       id: 1,
-      title: 'Support',
-      link: '#',
+      title: 'Contact',
+      link: '/contact',
     },
     {
       id: 2,
@@ -575,12 +635,12 @@ export const footer = {
     {
       id: 3,
       title: 'Privacy',
-      link: '#',
+      link: '/privacy-policy',
     },
     {
       id: 4,
       title: 'Terms',
-      link: '#',
+      link: '/terms-of-service',
     },
   ],
   socialLinks: [

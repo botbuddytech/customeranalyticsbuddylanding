@@ -1,0 +1,21 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://botbuddy-analytics.com/sitemap.xml
+
+# Disallow admin and private areas
+Disallow: /admin/
+Disallow: /api/
+Disallow: /_next/
+Disallow: /static/
+
+# Allow important pages
+Allow: /
+Allow: /contact
+Allow: /privacy-policy
+Allow: /terms-of-service
+Allow: /sitemap
+
+# Crawl delay (optional)
+Crawl-delay: 1

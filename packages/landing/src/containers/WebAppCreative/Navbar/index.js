@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import NavbarWrapper from 'common/components/Navbar';
 import Drawer from 'common/components/Drawer';
@@ -10,13 +11,14 @@ import HamburgMenu from 'common/components/HamburgMenu';
 import Container from 'common/components/UI/Container';
 import { DrawerContext } from 'common/contexts/DrawerContext';
 
-import { menu_items } from 'common/data/WebAppCreative';
+import { menu_items, contact_menu_items, new_pages_menu_items } from 'common/data/WebAppCreative';
 import ScrollSpyMenu from 'common/components/ScrollSpyMenu';
 
 import logoImage from 'common/assets/image/webAppCreative/logo.png';
 
 const Navbar = ({ navbarStyle, logoStyle, button, row, menuWrapper }) => {
   const { state, dispatch } = useContext(DrawerContext);
+  const router = useRouter();
 
   // Toggle drawer
   const toggleHandler = () => {
@@ -25,12 +27,21 @@ const Navbar = ({ navbarStyle, logoStyle, button, row, menuWrapper }) => {
     });
   };
 
+  // Use different menu items based on current page
+  let currentMenuItems;
+  if (['/contact', '/privacy-policy', '/terms-of-service', '/sitemap', '/shipping-policy', '/cancellation-refunds'].includes(router.pathname)) {
+    // For contact and new pages, use menu items that link to homepage sections
+    currentMenuItems = new_pages_menu_items;
+  } else {
+    currentMenuItems = menu_items;
+  }
+
   return (
     <NavbarWrapper {...navbarStyle}>
       <Container width="1400px">
         <Box {...row}>
           <Logo
-            href="#"
+            href="/"
             logoSrc={logoImage}
             title="SaaS Creative"
             logoStyle={logoStyle}
@@ -39,7 +50,7 @@ const Navbar = ({ navbarStyle, logoStyle, button, row, menuWrapper }) => {
           <Box {...menuWrapper} className="mainMenuWrapper">
             <ScrollSpyMenu
               className="main_menu"
-              menuItems={menu_items}
+              menuItems={currentMenuItems}
               offset={-70}
             />
             <Link href="#" className="navbar_button navbar_button_one">
@@ -57,7 +68,7 @@ const Navbar = ({ navbarStyle, logoStyle, button, row, menuWrapper }) => {
             >
               <ScrollSpyMenu
                 className="mobile_menu"
-                menuItems={menu_items}
+                menuItems={currentMenuItems}
                 drawerClose={true}
                 offset={-100}
               />

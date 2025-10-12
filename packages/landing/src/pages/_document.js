@@ -36,10 +36,16 @@ export default class CustomDocument extends Document {
       <Html lang="en">
         <Head>
           <link rel="icon" href="/favicon.png" />
-          {/* <link
-            rel="icon"
-            href="https://react-next-landing.redq.io/_next/static/images/favicon-ec2551afb2782a53fb493269d1ba4efe.png"
-          /> */}
+          <link rel="manifest" href="/manifest.json" />
+          <meta name="application-name" content="BotBuddy Customer Analytics" />
+          <meta name="apple-mobile-web-app-title" content="BotBuddy Analytics" />
+          <meta name="apple-mobile-web-app-capable" content="yes" />
+          <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+          <link rel="apple-touch-icon" href="/favicon.png" />
+          <link rel="mask-icon" href="/favicon.png" color="#95bf47" />
+          <meta name="msapplication-TileColor" content="#95bf47" />
+          <meta name="theme-color" content="#95bf47" />
+          
           {/* Next and Styled components SSR styles */}
           {this.props.styles}
           {/* Mantine SSR styles */}
