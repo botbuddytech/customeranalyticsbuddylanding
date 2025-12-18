@@ -15,6 +15,11 @@ const colors = {
   primary: '#95bf47', // 11
   primaryHover: '#7dab39', // 12
   secondary: '#FF9B3E', // 13
+  secondaryHover: '#F57C00', // slightly darker orange for hover
+  yellow: '#FFDC00',
+  yellowHover: '#F4C400',
+  error: '#DC2626', // red
+  errorHover: '#B91C1C', // darker red for hover
   borderColor: '#E5ECF4', //14
   linkColor: '#2C6FEE', // 15
   primaryBoxShadow: '0px 8px 20px -6px rgba(42, 162, 117, 0.57)',

@@ -47,11 +47,11 @@ export const theme = {
       },
     },
     error: {
-      color: colors.secondaryHover,
-      borderColor: colors.secondaryHover,
+      color: colors.error,
+      borderColor: colors.error,
       '&:hover': {
-        color: colors.secondary,
-        borderColor: colors.secondary,
+        color: colors.errorHover,
+        borderColor: colors.errorHover,
       },
     },
     primaryWithBg: {
@@ -83,11 +83,11 @@ export const theme = {
     },
     errorWithBg: {
       color: colors.white,
-      backgroundColor: colors.secondaryHover,
-      borderColor: colors.secondaryHover,
+      backgroundColor: colors.error,
+      borderColor: colors.error,
       '&:hover': {
-        backgroundColor: colors.secondary,
-        borderColor: colors.secondary,
+        backgroundColor: colors.errorHover,
+        borderColor: colors.errorHover,
       },
     },
   },

@@ -2,8 +2,9 @@ import React from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import 'common/assets/css/react-slick.css';
+import { SessionProvider } from 'next-auth/react';
 
-export default function App({ Component, pageProps }) {
+export default function App({ Component, pageProps: { session, ...pageProps } }) {
   const router = useRouter();
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://botbuddy-analytics.com';
   const path = router?.asPath || '/';
@@ -21,7 +22,7 @@ export default function App({ Component, pageProps }) {
   };
 
   return (
-    <>
+    <SessionProvider session={session}>
       <Head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -75,6 +76,6 @@ export default function App({ Component, pageProps }) {
         <link rel="dns-prefetch" href="//fonts.gstatic.com" />
       </Head>
       <Component {...pageProps} />
-    </>
+    </SessionProvider>
   );
 }

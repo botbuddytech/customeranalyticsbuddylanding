@@ -46,6 +46,13 @@ export default class CustomDocument extends Document {
           <meta name="msapplication-TileColor" content="#95bf47" />
           <meta name="theme-color" content="#95bf47" />
           
+          {/* Load google fonts */}
+          <link rel="preconnect" href="https://fonts.gstatic.com" />
+          <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Manrope:wght@400;500;700;800&display=swap"
+          />
+
           {/* Next and Styled components SSR styles */}
           {this.props.styles}
           {/* Mantine SSR styles */}
