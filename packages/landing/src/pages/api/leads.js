@@ -37,9 +37,10 @@ export default async function handler(req, res) {
         : "This email is already registered.",
     });
   } catch (error) {
-    console.error("Lead creation error:", error);
     return res.status(500).json({
-      message: "Unable to save your email right now. Please try again later.",
+      message:
+        error.message ||
+        "Unable to save your email right now. Please try again later.",
     });
   }
 }
