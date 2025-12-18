@@ -1,5 +1,14 @@
 {
   "compilerOptions": {
-    "baseUrl": "src"
+    "baseUrl": "src",
+    "typeRoots": [
+      "./node_modules/@types"
+    ]
+  },
+  "typeAcquisition": {
+    "enable": true,
+    "include": [
+      "express"
+    ]
   }
 }

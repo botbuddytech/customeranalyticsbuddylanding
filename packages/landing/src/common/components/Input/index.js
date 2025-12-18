@@ -12,24 +12,14 @@ const Input = ({
   isMaterial,
   icon,
   iconPosition,
-  passwordShowHide,
   className,
   ...props
 }) => {
-  // use toggle hooks
+  // use focus and value hooks
   const [state, setState] = useState({
-    toggle: false,
     focus: false,
     value: '',
   });
-
-  // toggle function
-  const handleToggle = () => {
-    setState({
-      ...state,
-      toggle: !state.toggle,
-    });
-  };
 
   // add focus class
   const handleOnFocus = (event) => {
@@ -122,20 +112,12 @@ const Input = ({
             {...props}
             id={htmlFor}
             name={htmlFor}
-            type={state.toggle ? 'password' : 'text'}
-            value={state.value}
+            type="password"
+            value={value !== undefined ? value : state.value}
             onChange={handleOnChange}
             onBlur={handleOnBlur}
             onFocus={handleOnFocus}
           />
-          {passwordShowHide && (
-            <EyeButton
-              onClick={handleToggle}
-              className={state.toggle ? 'eye' : 'eye-closed'}
-            >
-              <span />
-            </EyeButton>
-          )}
         </div>
       );
       break;
@@ -148,7 +130,7 @@ const Input = ({
             id={htmlFor}
             name={htmlFor}
             type={inputType}
-            value={state.value}
+            value={value !== undefined ? value : state.value}
             onChange={handleOnChange}
             onBlur={handleOnBlur}
             onFocus={handleOnFocus}
@@ -179,13 +161,10 @@ Input.propTypes = {
   label: PropTypes.string,
 
   /** The input value, required for a controlled component. */
-  value: PropTypes.oneOf(['string', 'number']),
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 
   /** Make default input into material style input. */
   isMaterial: PropTypes.bool,
-
-  /** Password show hide icon button prop [*only for password field]. */
-  passwordShowHide: PropTypes.bool,
 
   /** Set input type of the input element. Default type is text. */
   inputType: PropTypes.oneOf([
