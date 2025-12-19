@@ -15,19 +15,23 @@ export default async function handler(req, res) {
     const { created } = await createLead(email);
 
     // Fire-and-forget email sending using the template-based send-email API.
-    fetch(
-      `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/api/send-email`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          to: email,
-          subject: "Your BotBuddy Customer Analytics article",
-        }),
-      }
-    ).catch((err) => {
+    const baseUrl =
+      process.env.NEXTAUTH_URL ||
+      process.env.NEXT_PUBLIC_APP_URL ||
+      (process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : "http://localhost:3000");
+
+    fetch(`${baseUrl}/api/send-email`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        to: email,
+        subject: "Your BotBuddy Customer Analytics article",
+      }),
+    }).catch((err) => {
       console.error("Background email send failed:", err);
     });
 
