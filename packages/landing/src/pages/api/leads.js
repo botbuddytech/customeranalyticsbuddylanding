@@ -1,4 +1,8 @@
 import { createLead } from "../../api/leads";
+import {
+  sendFreeArticleEmail,
+  notifyOwnerOfRequest,
+} from "../../api/email/freeArticle";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -14,37 +18,12 @@ export default async function handler(req, res) {
   try {
     const { created } = await createLead(email);
 
-    // Fire-and-forget email sending using the template-based send-email API.
-    const baseUrl =
-      process.env.NEXTAUTH_URL ||
-      process.env.NEXT_PUBLIC_APP_URL ||
-      (process.env.VERCEL_URL
-        ? `https://${process.env.VERCEL_URL}`
-        : "http://localhost:3000");
-
-    fetch(`${baseUrl}/api/send-email`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        to: email,
-        subject: "Your BotBuddy Customer Analytics article",
-      }),
-    })
-      .then(async (response) => {
-        if (!response.ok) {
-          const text = await response.text().catch(() => "");
-          console.error(
-            "Background email send failed with status:",
-            response.status,
-            text
-          );
-        }
-      })
-      .catch((err) => {
-        console.error("Background email send failed:", err);
-      });
+    // Send free article email and notify owner directly (no extra HTTP roundtrip)
+    await sendFreeArticleEmail(
+      email,
+      "Your BotBuddy Customer Analytics article"
+    );
+    await notifyOwnerOfRequest(email);
 
     return res.status(created ? 201 : 200).json({
       message: created
