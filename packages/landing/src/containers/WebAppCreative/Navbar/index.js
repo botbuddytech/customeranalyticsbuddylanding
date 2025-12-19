@@ -70,7 +70,7 @@ const Navbar = ({ navbarStyle, logoStyle, button, row, menuWrapper }) => {
               offset={-70}
             />
             <Link
-              href="#"
+              href="/free-article"
               className="navbar_button navbar_button_two"
               style={{ marginLeft: "auto" }}
             >

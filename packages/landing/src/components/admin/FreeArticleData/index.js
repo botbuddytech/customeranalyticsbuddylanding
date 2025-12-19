@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import styled from "styled-components";
 import Heading from "common/components/Heading";
 import Text from "common/components/Text";
 import Button from "common/components/Button";
@@ -7,10 +8,14 @@ import {
   LeadsHeader,
   LeadsTable,
   LeadsRow,
-} from "./leadsData.style";
+} from "../LeadsData/leadsData.style";
 
-const LeadsData = () => {
-  const [leads, setLeads] = useState([]);
+const FreeArticleRow = styled(LeadsRow)`
+  grid-template-columns: 0.5fr 1fr 1.5fr 1.5fr 2fr 1.5fr;
+`;
+
+const FreeArticleData = () => {
+  const [freeArticles, setFreeArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -19,23 +24,23 @@ const LeadsData = () => {
   useEffect(() => {
     let isMounted = true;
 
-    async function fetchLeads() {
+    async function fetchFreeArticles() {
       try {
-        const response = await fetch("/api/admin/leads");
+        const response = await fetch("/api/admin/free-article");
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data.message || "Failed to load leads");
+          throw new Error(data.message || "Failed to load free article requests");
         }
 
         if (isMounted) {
-          const fetchedLeads = data.leads || [];
-          setLeads(fetchedLeads);
+          const fetchedFreeArticles = data.freeArticles || [];
+          setFreeArticles(fetchedFreeArticles);
           setCurrentPage(1);
         }
       } catch (err) {
         if (isMounted) {
-          setError(err.message || "Failed to load leads");
+          setError(err.message || "Failed to load free article requests");
         }
       } finally {
         if (isMounted) {
@@ -44,7 +49,7 @@ const LeadsData = () => {
       }
     }
 
-    fetchLeads();
+    fetchFreeArticles();
 
     return () => {
       isMounted = false;
@@ -69,13 +74,16 @@ const LeadsData = () => {
   };
 
   const handleExportCsv = () => {
-    if (!leads || leads.length === 0) return;
+    if (!freeArticles || freeArticles.length === 0) return;
 
-    const header = ["id", "email", "createdAt_IST"];
-    const rows = leads.map((lead) => [
-      lead.id,
-      lead.email,
-      formatDateTimeIndia(lead.createdAt),
+    const header = ["id", "name", "email", "subject", "message", "createdAt_IST"];
+    const rows = freeArticles.map((article) => [
+      article.id,
+      article.name || "",
+      article.email,
+      article.subject || "",
+      article.message || "",
+      formatDateTimeIndia(article.createdAt),
     ]);
 
     const csvContent = [header, ...rows]
@@ -94,35 +102,35 @@ const LeadsData = () => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.setAttribute("download", "botbuddy-leads.csv");
+    link.setAttribute("download", "botbuddy-free-article-requests.csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
   };
 
-  const totalPages = Math.max(1, Math.ceil(leads.length / pageSize));
+  const totalPages = Math.max(1, Math.ceil(freeArticles.length / pageSize));
   const safePage = Math.min(currentPage, totalPages);
   const startIndex = (safePage - 1) * pageSize;
-  const paginatedLeads = leads.slice(startIndex, startIndex + pageSize);
+  const paginatedFreeArticles = freeArticles.slice(startIndex, startIndex + pageSize);
 
   return (
     <LeadsSection>
       <LeadsHeader>
         <div>
-          <Heading as="h3" content="Leads Overview" />
+          <Heading as="h3" content="Free Article Requests Overview" />
           <Text
             as="span"
-            content="Live list of captured emails from your landing page."
+            content="Live list of free article requests from your landing page."
           />
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <span>Total leads: {leads.length}</span>
+          <span>Total requests: {freeArticles.length}</span>
           <Button
             type="button"
             title="⬇ Download CSV"
             onClick={handleExportCsv}
-            disabled={loading || leads.length === 0}
+            disabled={loading || freeArticles.length === 0}
             variant="extendedFab"
             colors="primaryWithBg"
             style={{
@@ -146,35 +154,54 @@ const LeadsData = () => {
       )}
 
       <LeadsTable>
-        <LeadsRow className="header">
+        <FreeArticleRow className="header">
           <span>ID</span>
+          <span>Name</span>
           <span>Email</span>
+          <span>Subject</span>
+          <span>Message</span>
           <span>Created (IST)</span>
-        </LeadsRow>
+        </FreeArticleRow>
         {loading ? (
-          <LeadsRow>
+          <FreeArticleRow>
             <span>Loading...</span>
             <span></span>
             <span></span>
-          </LeadsRow>
-        ) : leads.length === 0 ? (
-          <LeadsRow>
-            <span>No leads yet.</span>
             <span></span>
             <span></span>
-          </LeadsRow>
+            <span></span>
+          </FreeArticleRow>
+        ) : freeArticles.length === 0 ? (
+          <FreeArticleRow>
+            <span>No requests yet.</span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </FreeArticleRow>
         ) : (
-          paginatedLeads.map((lead) => (
-            <LeadsRow key={lead.id}>
-              <span>{lead.id}</span>
-              <span>{lead.email}</span>
-              <span>{formatDateTimeIndia(lead.createdAt)}</span>
-            </LeadsRow>
+          paginatedFreeArticles.map((article) => (
+            <FreeArticleRow key={article.id}>
+              <span>{article.id}</span>
+              <span>{article.name || "-"}</span>
+              <span>{article.email}</span>
+              <span>{article.subject || "-"}</span>
+              <span style={{ 
+                overflow: "hidden", 
+                textOverflow: "ellipsis", 
+                whiteSpace: "nowrap",
+                maxWidth: "100%"
+              }}>
+                {article.message || "-"}
+              </span>
+              <span>{formatDateTimeIndia(article.createdAt)}</span>
+            </FreeArticleRow>
           ))
         )}
       </LeadsTable>
 
-      {leads.length > pageSize && (
+      {freeArticles.length > pageSize && (
         <div
           style={{
             display: "flex",
@@ -216,4 +243,5 @@ const LeadsData = () => {
   );
 };
 
-export default LeadsData;
+export default FreeArticleData;
+
