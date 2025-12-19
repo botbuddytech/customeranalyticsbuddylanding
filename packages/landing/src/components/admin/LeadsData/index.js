@@ -218,4 +218,3 @@ const LeadsData = () => {
 
 export default LeadsData;
 
-

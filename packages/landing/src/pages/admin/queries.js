@@ -11,10 +11,10 @@ import {
 } from "containers/WebAppCreative/webAppCreative.style";
 import Navbar from "containers/WebAppCreative/Navbar";
 import Footer from "containers/WebAppCreative/Footer";
-import AdminLayout from "./_components/AdminLayout";
+import AdminLayout from "components/admin/AdminLayout";
 import Heading from "common/components/Heading";
 import Text from "common/components/Text";
-import FreeArticleData from "./_components/FreeArticleData";
+import FreeArticleData from "components/admin/FreeArticleData";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "lib/auth";
 
