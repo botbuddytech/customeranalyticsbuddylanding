@@ -1,5 +1,5 @@
 import { mailer } from "../../lib/mailer";
-import { renderWelcomeArticleEmail } from "./welcomeArticleTemplate";
+import { renderWelcomeArticleEmail } from "./templates/welcomeArticleTemplate";
 
 /**
  * Send the free article email to the subscriber.
