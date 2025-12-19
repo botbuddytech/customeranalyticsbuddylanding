@@ -31,9 +31,20 @@ export default async function handler(req, res) {
         to: email,
         subject: "Your BotBuddy Customer Analytics article",
       }),
-    }).catch((err) => {
-      console.error("Background email send failed:", err);
-    });
+    })
+      .then(async (response) => {
+        if (!response.ok) {
+          const text = await response.text().catch(() => "");
+          console.error(
+            "Background email send failed with status:",
+            response.status,
+            text
+          );
+        }
+      })
+      .catch((err) => {
+        console.error("Background email send failed:", err);
+      });
 
     return res.status(created ? 201 : 200).json({
       message: created
