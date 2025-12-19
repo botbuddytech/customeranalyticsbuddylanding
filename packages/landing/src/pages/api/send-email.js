@@ -1,7 +1,50 @@
-import { resend } from "../../lib/resend";
+import { mailer } from "../../lib/mailer";
 import { renderWelcomeArticleEmail } from "../../api/email/templates/welcomeArticleTemplate";
 import fs from "fs";
 import path from "path";
+
+function loadPdfAttachment() {
+  const attachments = [];
+
+  try {
+    const pdfPath = path.join(process.cwd(), "public", "botbuddy-article.pdf");
+
+    if (fs.existsSync(pdfPath)) {
+      attachments.push({
+        filename: "BotBuddy-Article.pdf",
+        path: pdfPath,
+      });
+    }
+  } catch (err) {
+    console.error("PDF attachment error:", err);
+  }
+
+  return attachments;
+}
+
+async function sendFreeArticleEmail(to, subjectOverride) {
+  const html = renderWelcomeArticleEmail();
+  const attachments = loadPdfAttachment();
+
+  await mailer.sendMail({
+    from: `"BotBuddy" <${process.env.GMAIL_USER}>`,
+    to,
+    subject: subjectOverride || "Your BotBuddy Customer Analytics article",
+    html,
+    attachments,
+  });
+}
+
+async function notifyOwnerOfRequest(userEmail) {
+  if (!process.env.GMAIL_USER) return;
+
+  await mailer.sendMail({
+    from: `"BotBuddy" <${process.env.GMAIL_USER}>`,
+    to: process.env.GMAIL_USER,
+    subject: "New free article request",
+    text: `A new user requested the free article.\n\nEmail: ${userEmail}`,
+  });
+}
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -15,37 +58,15 @@ export default async function handler(req, res) {
   }
 
   try {
-    const html = renderWelcomeArticleEmail();
+    // 1) Send the free article to the user
+    await sendFreeArticleEmail(to, subject);
 
-    // Try to attach a static PDF from the public folder (e.g., /public/botbuddy-article.pdf)
-    // Make sure you place your PDF file at that path in the project.
-    let attachments = [];
-    try {
-      const pdfPath = path.join(
-        process.cwd(),
-        "public",
-        "botbuddy-article.pdf"
-      );
-      const pdfBuffer = fs.readFileSync(pdfPath);
-      attachments.push({
-        filename: "BotBuddy-Article.pdf",
-        content: pdfBuffer,
-      });
-    } catch (err) {
-      console.error("PDF attachment could not be loaded:", err);
-    }
+    // 2) Notify internal inbox that someone requested the article
+    await notifyOwnerOfRequest(to);
 
-    const data = await resend.emails.send({
-      from: "Landing <onboarding@resend.dev>", // temp domain
-      to,
-      subject: subject || "Your BotBuddy Customer Analytics article",
-      html,
-      attachments: attachments.length ? attachments : undefined,
-    });
-
-    return res.status(200).json({ success: true, data });
+    return res.status(200).json({ success: true });
   } catch (error) {
-    console.error("Resend email error:", error);
+    console.error("Gmail email error:", error);
     return res.status(500).json({ error: "Email failed" });
   }
 }
