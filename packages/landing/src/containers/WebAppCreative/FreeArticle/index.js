@@ -35,12 +35,17 @@ const FreeArticle = () => {
     setSubmitting(true);
 
     try {
-      const response = await fetch("/api/leads", {
+      const response = await fetch("/api/free-article", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email: formData.email }),
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+        }),
       });
 
       const data = await response.json().catch(() => ({}));
@@ -271,5 +276,3 @@ const FreeArticle = () => {
 };
 
 export default FreeArticle;
-
-
