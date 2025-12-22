@@ -1,4 +1,8 @@
 import { createFreeArticleRequest } from "../../api/freeArticle";
+import {
+  sendFreeArticleEmail,
+  notifyOwnerOfFreeArticleQuery,
+} from "../../api/email/freeArticle";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -19,6 +23,18 @@ export default async function handler(req, res) {
       message,
     });
 
+    // Send free article email to customer and notify owner
+    await sendFreeArticleEmail(
+      email,
+      "Your BotBuddy Customer Analytics article"
+    );
+    await notifyOwnerOfFreeArticleQuery({
+      name,
+      email,
+      subject,
+      message,
+    });
+
     return res.status(201).json({
       message:
         "Thanks! We have saved your request and will send the free article to your email shortly.",
@@ -33,5 +49,3 @@ export default async function handler(req, res) {
     });
   }
 }
-
-
