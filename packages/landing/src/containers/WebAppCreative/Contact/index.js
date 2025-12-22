@@ -26,6 +26,8 @@ const Contact = ({
     message: "",
     service: "",
   });
+  const [statusMessage, setStatusMessage] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const [focusedField, setFocusedField] = useState(null);
 
   const handleInputChange = (name, value) => {
@@ -35,19 +37,57 @@ const Contact = ({
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log("Form submitted:", formData);
-    // You can add your form submission logic here
-    alert("Thank you for your message! We will get back to you soon.");
-    setFormData({
-      name: "",
-      email: "",
-      subject: "",
-      message: "",
-      service: "",
-    });
+    setStatusMessage("");
+
+    if (!formData.email) {
+      setStatusMessage("Please enter your email.");
+      return;
+    }
+
+    setSubmitting(true);
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+        }),
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(
+          data.message || "Unable to send your message. Please try again."
+        );
+      }
+
+      setStatusMessage(
+        data.message ||
+          "Thank you for your message! We will get back to you soon."
+      );
+      setFormData({
+        name: "",
+        email: "",
+        subject: "",
+        message: "",
+        service: "",
+      });
+    } catch (error) {
+      setStatusMessage(
+        error.message || "Something went wrong. Please try again."
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -390,13 +430,31 @@ const Contact = ({
 
                 <Button
                   type="submit"
-                  title="Send Message"
+                  title={submitting ? "Sending..." : "Send Message"}
                   colors="primaryWithBg"
+                  disabled={submitting}
                   style={{
                     width: "100%",
                     marginTop: "10px",
                   }}
                 />
+
+                {statusMessage && (
+                  <Text
+                    as="p"
+                    content={statusMessage}
+                    style={{
+                      marginTop: "12px",
+                      fontSize: 14,
+                      color:
+                        statusMessage.toLowerCase().includes("unable") ||
+                        statusMessage.toLowerCase().includes("wrong") ||
+                        statusMessage.toLowerCase().includes("error")
+                          ? "#dc2626"
+                          : "#0f9d58",
+                    }}
+                  />
+                )}
               </form>
             </div>
           </Box>
