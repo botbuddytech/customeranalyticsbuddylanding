@@ -9,12 +9,30 @@ import path from "path";
 function loadPdfAttachment() {
   const attachments = [];
   try {
-    const pdfPath = path.join(process.cwd(), "public", "botbuddy-article.pdf");
-    if (fs.existsSync(pdfPath)) {
+    // Try multiple possible paths for different environments
+    const possiblePaths = [
+      path.join(process.cwd(), "public", "botbuddy-article.pdf"),
+      path.join(process.cwd(), "packages", "landing", "public", "botbuddy-article.pdf"),
+      path.join(__dirname, "..", "..", "..", "public", "botbuddy-article.pdf"),
+    ];
+
+    let pdfPath = null;
+    for (const possiblePath of possiblePaths) {
+      if (fs.existsSync(possiblePath)) {
+        pdfPath = possiblePath;
+        break;
+      }
+    }
+
+    if (pdfPath) {
       attachments.push({
         filename: "BotBuddy-Article.pdf",
         path: pdfPath,
       });
+      console.log("PDF attachment found at:", pdfPath);
+    } else {
+      console.warn("PDF attachment not found. Tried paths:", possiblePaths);
+      console.warn("Current working directory:", process.cwd());
     }
   } catch (err) {
     console.error("PDF attachment error:", err);
