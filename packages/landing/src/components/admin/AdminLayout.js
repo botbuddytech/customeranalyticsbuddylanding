@@ -42,6 +42,25 @@ const MENU_ITEMS = [
       </svg>
     ),
   },
+  {
+    label: "Contact Messages",
+    path: "/admin/contactmessage",
+    badge: "Active",
+    icon: (
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 20 20"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M4 3H16C16.55 3 17 3.45 17 4V16C17 16.55 16.55 17 16 17H4C3.45 17 3 16.55 3 16V4C3 3.45 3.45 3 4 3ZM5 5V15H15V5H5ZM6 7H14V9H6V7ZM6 10H11V12H6V10Z"
+          fill="currentColor"
+        />
+      </svg>
+    ),
+  },
 ];
 
 const AdminLayout = ({ children }) => {
