@@ -10,12 +10,56 @@ import path from "path";
 function loadPdfAttachment() {
   const attachments = [];
   try {
-    // Use relative path from this file to the assets folder
-    // This file is at: src/api/email/freeArticle.js
-    // PDF is at: src/assets/pdf/botbuddy-article.pdf
-    const pdfPath = path.join(__dirname, "..", "..", "assets", "pdf", "botbuddy-article.pdf");
+    const cwd = process.cwd();
     
-    if (fs.existsSync(pdfPath)) {
+    // Try multiple paths - in Vercel, source files are at the root of the package
+    const possiblePaths = [
+      // Production/Vercel: source files are at process.cwd()/src
+      path.join(cwd, "src", "assets", "pdf", "botbuddy-article.pdf"),
+      // Standalone output structure
+      path.join(cwd, ".next", "standalone", "packages", "landing", "src", "assets", "pdf", "botbuddy-article.pdf"),
+      // If cwd is already in .next, go up
+      path.join(cwd, "..", "..", "src", "assets", "pdf", "botbuddy-article.pdf"),
+      // Development: direct from cwd
+      path.join(cwd, "assets", "pdf", "botbuddy-article.pdf"),
+      // Relative from __dirname (fallback - goes up from .next/server/chunks)
+      path.join(__dirname, "..", "..", "..", "..", "src", "assets", "pdf", "botbuddy-article.pdf"),
+      path.join(__dirname, "..", "..", "..", "..", "..", "src", "assets", "pdf", "botbuddy-article.pdf"),
+    ];
+
+    let pdfPath = null;
+    for (const possiblePath of possiblePaths) {
+      try {
+        const normalizedPath = path.resolve(possiblePath);
+        if (fs.existsSync(normalizedPath)) {
+          pdfPath = normalizedPath;
+          break;
+        }
+      } catch (checkErr) {
+        continue;
+      }
+    }
+    
+    // If still not found, try to find it by walking up from __dirname
+    if (!pdfPath) {
+      try {
+        let currentDir = __dirname;
+        for (let i = 0; i < 10; i++) {
+          const testPath = path.join(currentDir, "src", "assets", "pdf", "botbuddy-article.pdf");
+          if (fs.existsSync(testPath)) {
+            pdfPath = testPath;
+            break;
+          }
+          const parentDir = path.dirname(currentDir);
+          if (parentDir === currentDir) break; // Reached root
+          currentDir = parentDir;
+        }
+      } catch (walkErr) {
+        // Ignore walk errors
+      }
+    }
+
+    if (pdfPath) {
       // Read file as buffer for reliable serverless compatibility
       const fileBuffer = fs.readFileSync(pdfPath);
       attachments.push({
@@ -24,9 +68,9 @@ function loadPdfAttachment() {
       });
       console.log("PDF attachment loaded successfully from:", pdfPath);
     } else {
-      console.warn("PDF attachment not found at:", pdfPath);
+      console.warn("PDF attachment not found. Tried paths:", possiblePaths);
+      console.warn("Current working directory:", cwd);
       console.warn("__dirname:", __dirname);
-      console.warn("Attempted path:", pdfPath);
     }
   } catch (err) {
     console.error("PDF attachment error:", err);
