@@ -2,25 +2,45 @@ import { mailer } from "../../lib/mailer";
 import { renderWelcomeArticleEmail } from "./templates/welcomeArticleTemplate";
 import fs from "fs";
 import path from "path";
+import https from "https";
+import http from "http";
 
 /**
  * Load PDF attachment from the public folder.
  */
-function loadPdfAttachment() {
+async function loadPdfAttachment() {
   const attachments = [];
   try {
+    const cwd = process.cwd();
+    const dirname = __dirname;
+    
     // Try multiple possible paths for different environments
     const possiblePaths = [
-      path.join(process.cwd(), "public", "botbuddy-article.pdf"),
-      path.join(process.cwd(), "packages", "landing", "public", "botbuddy-article.pdf"),
-      path.join(__dirname, "..", "..", "..", "public", "botbuddy-article.pdf"),
+      // Standard Next.js public folder
+      path.join(cwd, "public", "botbuddy-article.pdf"),
+      // Next.js standalone output (Vercel production)
+      path.join(cwd, ".next", "standalone", "packages", "landing", "public", "botbuddy-article.pdf"),
+      path.join(cwd, ".next", "standalone", "public", "botbuddy-article.pdf"),
+      // Relative to current file location
+      path.join(dirname, "..", "..", "..", "public", "botbuddy-article.pdf"),
+      path.join(dirname, "..", "..", "..", "..", "public", "botbuddy-article.pdf"),
+      // Monorepo structure
+      path.join(cwd, "packages", "landing", "public", "botbuddy-article.pdf"),
+      // Vercel serverless function path (if file is copied)
+      path.join("/var/task", "public", "botbuddy-article.pdf"),
+      path.join("/var/task", "packages", "landing", "public", "botbuddy-article.pdf"),
     ];
 
     let pdfPath = null;
     for (const possiblePath of possiblePaths) {
-      if (fs.existsSync(possiblePath)) {
-        pdfPath = possiblePath;
-        break;
+      try {
+        if (fs.existsSync(possiblePath)) {
+          pdfPath = possiblePath;
+          break;
+        }
+      } catch (checkErr) {
+        // Continue to next path if this one fails
+        continue;
       }
     }
 
@@ -31,8 +51,48 @@ function loadPdfAttachment() {
       });
       console.log("PDF attachment found at:", pdfPath);
     } else {
-      console.warn("PDF attachment not found. Tried paths:", possiblePaths);
-      console.warn("Current working directory:", process.cwd());
+      // Fallback: Try to fetch from URL if file not found on disk
+      // This works in Vercel where public files are served via CDN
+      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 
+                     process.env.NEXTAUTH_URL || 
+                     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null);
+      
+      if (baseUrl) {
+        const pdfUrl = `${baseUrl}/botbuddy-article.pdf`;
+        console.log("Attempting to fetch PDF from URL:", pdfUrl);
+        
+        try {
+          const fileBuffer = await new Promise((resolve, reject) => {
+            const client = pdfUrl.startsWith('https') ? https : http;
+            client.get(pdfUrl, (res) => {
+              if (res.statusCode !== 200) {
+                reject(new Error(`Failed to fetch PDF: ${res.statusCode}`));
+                return;
+              }
+              const chunks = [];
+              res.on('data', (chunk) => chunks.push(chunk));
+              res.on('end', () => resolve(Buffer.concat(chunks)));
+              res.on('error', reject);
+            }).on('error', reject);
+          });
+          
+          attachments.push({
+            filename: "BotBuddy-Article.pdf",
+            content: fileBuffer,
+          });
+          console.log("PDF attachment loaded from URL successfully");
+        } catch (urlErr) {
+          console.warn("Failed to fetch PDF from URL:", urlErr.message);
+          console.warn("PDF attachment not found. Tried paths:", possiblePaths);
+          console.warn("Current working directory:", cwd);
+          console.warn("__dirname:", dirname);
+        }
+      } else {
+        console.warn("PDF attachment not found. Tried paths:", possiblePaths);
+        console.warn("Current working directory:", cwd);
+        console.warn("__dirname:", dirname);
+        console.warn("No base URL available for fallback fetch");
+      }
     }
   } catch (err) {
     console.error("PDF attachment error:", err);
@@ -49,7 +109,7 @@ export async function sendFreeArticleEmail(to, subjectOverride) {
   }
 
   const html = renderWelcomeArticleEmail();
-  const attachments = loadPdfAttachment();
+  const attachments = await loadPdfAttachment();
 
   await mailer.sendMail({
     from: `"BotBuddy" <${process.env.GMAIL_USER}>`,
