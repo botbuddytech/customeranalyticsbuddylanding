@@ -61,6 +61,25 @@ const MENU_ITEMS = [
       </svg>
     ),
   },
+  {
+    label: "Subscription",
+    path: "/admin/subscription",
+    badge: "Active",
+    icon: (
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 20 20"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M10 2C5.58 2 2 5.58 2 10C2 14.42 5.58 18 10 18C14.42 18 18 14.42 18 10C18 5.58 14.42 2 10 2ZM10 16C6.69 16 4 13.31 4 10C4 6.69 6.69 4 10 4C13.31 4 16 6.69 16 10C16 13.31 13.31 16 10 16ZM10 6C7.79 6 6 7.79 6 10C6 12.21 7.79 14 10 14C12.21 14 14 12.21 14 10C14 7.79 12.21 6 10 6ZM10 12C8.9 12 8 11.1 8 10C8 8.9 8.9 8 10 8C11.1 8 12 8.9 12 10C12 11.1 11.1 12 10 12Z"
+          fill="currentColor"
+        />
+      </svg>
+    ),
+  },
 ];
 
 const AdminLayout = ({ children }) => {
@@ -109,4 +128,3 @@ const AdminLayout = ({ children }) => {
 };
 
 export default AdminLayout;
-
