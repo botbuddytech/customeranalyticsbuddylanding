@@ -167,10 +167,33 @@ const AdminContent = styled.div`
   border-radius: 0 20px 20px 0;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
   width: 100%;
-  min-height: calc(100vh - 160px);
+  height: calc(100vh - 160px);
+  min-height: 600px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: sticky;
+  top: 80px;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+
+    &:hover {
+      background: #a8a8a8;
+    }
+  }
 
   h2 {
-    color: ${themeGet('colors.headingColor')};
+    color: ${themeGet('colors.headingColor', '#0d0d0d')};
     font-size: 28px;
     font-weight: 700;
     margin-bottom: 8px;
@@ -185,6 +208,10 @@ const AdminContent = styled.div`
 
   @media (max-width: 991px) {
     border-radius: 16px;
+    position: relative;
+    top: 0;
+    height: auto;
+    min-height: auto;
   }
 
   @media (max-width: 768px) {

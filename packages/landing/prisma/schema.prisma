@@ -32,3 +32,13 @@ model ContactMessage {
   message   String?
   createdAt DateTime @default(now())
 }
+
+model Blog {
+  id         Int      @id @default(autoincrement())
+  title      String
+  slug       String   @unique
+  content    String   @db.Text
+  youtubeUrl String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}

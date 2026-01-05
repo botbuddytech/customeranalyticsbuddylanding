@@ -417,7 +417,11 @@ const SubscriptionData = () => {
   };
 
   const handleDelete = async (planId) => {
-    if (!confirm("Are you sure you want to delete this plan? This action cannot be undone.")) {
+    if (
+      !confirm(
+        "Are you sure you want to delete this plan? This action cannot be undone."
+      )
+    ) {
       return;
     }
 
@@ -608,7 +612,12 @@ const SubscriptionData = () => {
                   onClick={() => handleEdit(plan)}
                   variant="textButton"
                   colors="primary"
-                  style={{ padding: "4px 8px", minWidth: 0, height: 28, fontSize: 12 }}
+                  style={{
+                    padding: "4px 8px",
+                    minWidth: 0,
+                    height: 28,
+                    fontSize: 12,
+                  }}
                 />
                 <Button
                   type="button"
@@ -673,7 +682,9 @@ const SubscriptionData = () => {
         <ModalOverlay onClick={() => !submitting && setShowModal(false)}>
           <ModalContent onClick={(e) => e.stopPropagation()}>
             <ModalHeader>
-              <h3>{editingPlan ? "Edit Subscription Plan" : "Create New Plan"}</h3>
+              <h3>
+                {editingPlan ? "Edit Subscription Plan" : "Create New Plan"}
+              </h3>
               <CloseButton
                 onClick={() => !submitting && setShowModal(false)}
                 disabled={submitting}
@@ -697,7 +708,12 @@ const SubscriptionData = () => {
                         type="text"
                         value={formData.code}
                         onChange={(e) =>
-                          setFormData({ ...formData, code: e.target.value.toLowerCase().replace(/[^a-z0-9-_]/g, '') })
+                          setFormData({
+                            ...formData,
+                            code: e.target.value
+                              .toLowerCase()
+                              .replace(/[^a-z0-9-_]/g, ""),
+                          })
                         }
                         required
                         placeholder="e.g., free, growth, enterprise"
@@ -782,7 +798,9 @@ const SubscriptionData = () => {
                     >
                       <option value="">None</option>
                       <option value="success">Success (Green)</option>
-                      <option value="attention">Attention (Yellow/Orange)</option>
+                      <option value="attention">
+                        Attention (Yellow/Orange)
+                      </option>
                       <option value="info">Info (Blue)</option>
                     </FormSelect>
                   </FormGroup>
@@ -793,7 +811,10 @@ const SubscriptionData = () => {
                         type="text"
                         value={formData.badgeLabel}
                         onChange={(e) =>
-                          setFormData({ ...formData, badgeLabel: e.target.value })
+                          setFormData({
+                            ...formData,
+                            badgeLabel: e.target.value,
+                          })
                         }
                         placeholder="e.g., Popular, Best Value"
                         disabled={submitting}
