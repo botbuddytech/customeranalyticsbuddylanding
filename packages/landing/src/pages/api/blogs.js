@@ -6,8 +6,12 @@ export default async function handler(req, res) {
   }
 
   try {
+    const { limit } = req.query;
+    const takeLimit = limit ? parseInt(limit, 10) : undefined;
+
     const blogs = await prisma.blog.findMany({
-      orderBy: { createdAt: "desc" },
+      orderBy: { updatedAt: "desc" }, // Order by updatedAt to get latest updated blogs
+      take: takeLimit, // Limit results if specified
       select: {
         id: true,
         title: true,
