@@ -38,6 +38,7 @@ model Blog {
   title      String
   slug       String   @unique
   content    String   @db.Text
+  imageUrl   String?
   youtubeUrl String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt

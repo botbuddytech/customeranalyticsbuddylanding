@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/router";
+import Head from "next/head";
 import Heading from "common/components/Heading";
 import Button from "common/components/Button";
 import {
@@ -7,6 +8,8 @@ import {
   BlogHeader,
   BlogList,
   BlogCard,
+  BlogCardImage,
+  BlogCardBody,
   BlogCardHeader,
   BlogCardTitle,
   BlogCardMeta,
@@ -24,6 +27,19 @@ import {
   ActionButton,
   EmptyState,
   LoadingState,
+  ImageUploadContainer,
+  ImageUploadLeft,
+  ImagePreviewRight,
+  ImageUploadArea,
+  ImageUploadIcon,
+  ImageUploadText,
+  ImageUploadHint,
+  ImageSizeInfo,
+  ImagePreviewContainer,
+  ImagePreview,
+  ImagePreviewOverlay,
+  RemoveImageButton,
+  ImageUploadInput,
 } from "./blogData.style";
 
 const BlogData = () => {
@@ -40,11 +56,52 @@ const BlogData = () => {
     title: "",
     content: "",
     youtubeUrl: "",
+    imageUrl: "",
   });
+  const [imagePreview, setImagePreview] = useState(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [selectedImageFile, setSelectedImageFile] = useState(null); // Store selected file for later upload
+
+  const fetchBlogs = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await fetch("/api/admin/blogs");
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to load blogs");
+      }
+
+      setBlogs(data.blogs || []);
+      setError("");
+    } catch (err) {
+      setError(err.message || "Failed to load blogs");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     fetchBlogs();
-  }, []);
+  }, [fetchBlogs]);
+
+  const handleCloseModal = useCallback(() => {
+    setIsModalOpen(false);
+    setEditingBlog(null);
+    setFormData({
+      title: "",
+      content: "",
+      youtubeUrl: "",
+      imageUrl: "",
+    });
+    setImagePreview(null);
+    setSelectedImageFile(null); // Clear selected file
+    setEditorTabOpen(false);
+    if (editorWindow) {
+      editorWindow.close();
+      setEditorWindow(null);
+    }
+  }, [editorWindow]);
 
   // Listen for blog update messages from editor window
   useEffect(() => {
@@ -77,7 +134,7 @@ const BlogData = () => {
 
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
-  }, [isModalOpen, editingBlog, handleCloseModal]);
+  }, [isModalOpen, editingBlog, handleCloseModal, fetchBlogs]);
 
   // Check if editor window is closed
   useEffect(() => {
@@ -93,40 +150,6 @@ const BlogData = () => {
 
     return () => clearInterval(checkWindowClosed);
   }, [editorTabOpen, editorWindow]);
-
-  // Check if editor window is closed
-  useEffect(() => {
-    if (!editorTabOpen || !editorWindow) return;
-
-    const checkWindowClosed = setInterval(() => {
-      if (editorWindow.closed) {
-        setEditorTabOpen(false);
-        setEditorWindow(null);
-        clearInterval(checkWindowClosed);
-      }
-    }, 500);
-
-    return () => clearInterval(checkWindowClosed);
-  }, [editorTabOpen, editorWindow]);
-
-  const fetchBlogs = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch("/api/admin/blogs");
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to load blogs");
-      }
-
-      setBlogs(data.blogs || []);
-      setError("");
-    } catch (err) {
-      setError(err.message || "Failed to load blogs");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleOpenModal = (blog = null) => {
     if (blog) {
@@ -135,27 +158,69 @@ const BlogData = () => {
         title: blog.title || "",
         content: blog.content || "",
         youtubeUrl: blog.youtubeUrl || "",
+        imageUrl: blog.imageUrl || "",
       });
+      setImagePreview(blog.imageUrl || null);
     } else {
       setEditingBlog(null);
       setFormData({
         title: "",
         content: "",
         youtubeUrl: "",
+        imageUrl: "",
       });
+      setImagePreview(null);
     }
     setIsModalOpen(true);
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setEditingBlog(null);
-    setFormData({
-      title: "",
-      content: "",
-      youtubeUrl: "",
-    });
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"];
+    if (!allowedTypes.includes(file.type)) {
+      setError("Invalid file type. Only JPEG, PNG, WEBP, and GIF are allowed.");
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      setError("File size exceeds 5MB limit.");
+      return;
+    }
+
+    setError("");
+    setSelectedImageFile(file); // Store file for later upload
+
+    // Convert file to base64 for preview only (not uploading yet)
+    const reader = new FileReader();
+    
+    reader.onloadend = () => {
+      const base64String = reader.result;
+      setImagePreview(base64String); // Show preview from base64
+    };
+
+    reader.onerror = () => {
+      setError("Failed to read image file");
+      setSelectedImageFile(null);
+      setImagePreview(null);
+    };
+
+    reader.readAsDataURL(file);
   };
+
+  const handleRemoveImage = () => {
+    setFormData((prev) => ({
+      ...prev,
+      imageUrl: "",
+    }));
+    setImagePreview(null);
+    setSelectedImageFile(null); // Clear selected file
+  };
+
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({
@@ -166,21 +231,82 @@ const BlogData = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     setSubmitting(true);
     setError("");
 
     try {
+      let imageUrl = formData.imageUrl;
+
+      // If a new image file was selected, upload it first
+      if (selectedImageFile) {
+        setUploadingImage(true);
+        try {
+          // Convert file to base64 for upload
+          const base64String = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(selectedImageFile);
+          });
+
+          // Upload to server
+          const response = await fetch("/api/admin/blogs/upload-image", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              imageBase64: base64String,
+              fileName: selectedImageFile.name,
+              blogId: editingBlog?.id || null,
+            }),
+          });
+
+          if (!response.ok) {
+            let errorMessage = "Failed to upload image";
+            try {
+              const errorData = await response.json();
+              errorMessage = errorData.message || errorMessage;
+            } catch (e) {
+              errorMessage = response.statusText || errorMessage;
+            }
+            throw new Error(errorMessage);
+          }
+
+          const data = await response.json();
+          imageUrl = data.url;
+          setUploadingImage(false);
+        } catch (err) {
+          setUploadingImage(false);
+          setError(err.message || "Failed to upload image");
+          setSubmitting(false);
+          return;
+        }
+      }
+
       const url = editingBlog
         ? `/api/admin/blogs/${editingBlog.id}`
         : "/api/admin/blogs";
       const method = editingBlog ? "PUT" : "POST";
+
+      // Include oldImageUrl for deletion if image changed
+      const payload = {
+        title: formData.title,
+        content: formData.content,
+        youtubeUrl: formData.youtubeUrl || "",
+        imageUrl: imageUrl || "",
+        ...(editingBlog && editingBlog.imageUrl !== imageUrl
+          ? { oldImageUrl: editingBlog.imageUrl }
+          : {}),
+      };
 
       const response = await fetch(url, {
         method,
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       const data = await response.json();
@@ -191,10 +317,12 @@ const BlogData = () => {
 
       handleCloseModal();
       fetchBlogs();
+      setSelectedImageFile(null); // Clear selected file after successful submission
     } catch (err) {
       setError(err.message || "Failed to save blog");
     } finally {
       setSubmitting(false);
+      setUploadingImage(false);
     }
   };
 
@@ -243,8 +371,21 @@ const BlogData = () => {
   }
 
   return (
-    <BlogSection>
-      <BlogHeader>
+    <>
+      <Head>
+        <style>{`
+          /* Ensure modal is always above navbar - override any sticky navbar z-index */
+          [class*="sticky"], 
+          .sticky-nav-active,
+          .web_app_creative_navbar,
+          [style*="z-index: 9999"],
+          [style*="z-index:9999"] {
+            z-index: 9999 !important;
+          }
+        `}</style>
+      </Head>
+      <BlogSection>
+        <BlogHeader>
         <div>
           <Heading as="h3" content="Blog Management" />
           <p style={{ margin: "4px 0 0", fontSize: "14px", color: "#666" }}>
@@ -280,34 +421,56 @@ const BlogData = () => {
         <BlogList>
           {blogs.map((blog) => (
             <BlogCard key={blog.id}>
-              <BlogCardHeader>
-                <BlogCardTitle>{blog.title}</BlogCardTitle>
-                <BlogCardMeta>
-                  <span>{formatDate(blog.createdAt)}</span>
-                  <ActionButton
-                    className="secondary"
-                    onClick={() => handleOpenModal(blog)}
-                    style={{ padding: "6px 12px", fontSize: "12px" }}
-                  >
-                    Edit
-                  </ActionButton>
-                  <ActionButton
-                    className="danger"
-                    onClick={() => handleDelete(blog.id)}
-                    style={{ padding: "6px 12px", fontSize: "12px" }}
-                  >
-                    Delete
-                  </ActionButton>
-                </BlogCardMeta>
-              </BlogCardHeader>
-              <BlogCardContent>{blog.content}</BlogCardContent>
-              <EditContentButton
-                onClick={() => {
-                  window.open(`/admin/blogs/edit/${blog.id}`, '_blank');
-                }}
-              >
-                Update Content
-              </EditContentButton>
+              <BlogCardImage>
+                {blog.imageUrl ? (
+                  <img
+                    src={blog.imageUrl}
+                    alt={blog.title}
+                  />
+                ) : (
+                  <div style={{
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#999',
+                    fontSize: '12px',
+                  }}>
+                    No Image
+                  </div>
+                )}
+              </BlogCardImage>
+              <BlogCardBody>
+                <BlogCardHeader>
+                  <BlogCardTitle>{blog.title}</BlogCardTitle>
+                  <BlogCardMeta>
+                    <span>{formatDate(blog.createdAt)}</span>
+                    <ActionButton
+                      className="secondary"
+                      onClick={() => handleOpenModal(blog)}
+                      style={{ padding: "6px 12px", fontSize: "12px" }}
+                    >
+                      Edit
+                    </ActionButton>
+                    <ActionButton
+                      className="danger"
+                      onClick={() => handleDelete(blog.id)}
+                      style={{ padding: "6px 12px", fontSize: "12px" }}
+                    >
+                      Delete
+                    </ActionButton>
+                  </BlogCardMeta>
+                </BlogCardHeader>
+                <BlogCardContent>{blog.content}</BlogCardContent>
+                <EditContentButton
+                  onClick={() => {
+                    window.open(`/admin/blogs/edit/${blog.id}`, '_blank');
+                  }}
+                >
+                  Update Content
+                </EditContentButton>
+              </BlogCardBody>
             </BlogCard>
           ))}
         </BlogList>
@@ -347,19 +510,145 @@ const BlogData = () => {
                   placeholder="Enter blog content (supports markdown)"
                   required
                 />
-                {editingBlog && (
-                  <EditContentButton
-                    type="button"
-                    onClick={() => {
+                <EditContentButton
+                  type="button"
+                  onClick={async () => {
+                    if (editingBlog) {
+                      // For existing blog, open editor directly
                       const editorWindow = window.open(`/admin/blogs/edit/${editingBlog.id}`, '_blank');
                       if (editorWindow) {
                         setEditorTabOpen(true);
                         setEditorWindow(editorWindow);
                       }
-                    }}
-                  >
-                    Edit Content in Full Editor
-                  </EditContentButton>
+                    } else {
+                      // For new blog, create a draft first
+                      if (!formData.title || !formData.title.trim()) {
+                        setError("Please enter a title before opening the editor.");
+                        return;
+                      }
+
+                      try {
+                        setSubmitting(true);
+                        // Create a draft blog with current data
+                        const response = await fetch("/api/admin/blogs", {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                          body: JSON.stringify({
+                            title: formData.title,
+                            content: formData.content || "",
+                            youtubeUrl: formData.youtubeUrl || "",
+                            imageUrl: formData.imageUrl || "",
+                          }),
+                        });
+
+                        const data = await response.json();
+
+                        if (!response.ok) {
+                          throw new Error(data.message || "Failed to create draft blog");
+                        }
+
+                        // Set the editing blog to the newly created draft
+                        setEditingBlog(data.blog);
+                        setFormData((prev) => ({
+                          ...prev,
+                          // Keep all form data
+                        }));
+
+                        // Open editor with the new blog ID
+                        const editorWindow = window.open(`/admin/blogs/edit/${data.blog.id}`, '_blank');
+                        if (editorWindow) {
+                          setEditorTabOpen(true);
+                          setEditorWindow(editorWindow);
+                        }
+                      } catch (err) {
+                        setError(err.message || "Failed to create draft blog");
+                      } finally {
+                        setSubmitting(false);
+                      }
+                    }
+                  }}
+                >
+                  Edit Content in Full Editor
+                </EditContentButton>
+              </FormGroup>
+
+              <FormGroup>
+                <Label>
+                  Blog Image{" "}
+                  <span className="optional">(optional)</span>
+                </Label>
+                <ImageSizeInfo style={{ marginBottom: '16px', display: 'block' }}>
+                  Recommended size: 415 × 280 pixels (images will be displayed at this size)
+                </ImageSizeInfo>
+                <ImageUploadContainer>
+                  <ImageUploadLeft>
+                    <label htmlFor="image-upload" style={{ display: 'block', cursor: 'pointer' }}>
+                      <ImageUploadArea isDragging={false}>
+                        <ImageUploadIcon>📷</ImageUploadIcon>
+                        <ImageUploadText>
+                          {uploadingImage ? "Uploading..." : "Click to select image"}
+                        </ImageUploadText>
+                        <ImageUploadHint>
+                          Supports: JPEG, PNG, WEBP, GIF
+                        </ImageUploadHint>
+                        <ImageUploadHint style={{ marginTop: '8px', fontSize: '12px' }}>
+                          Max size: 5MB
+                        </ImageUploadHint>
+                        <ImageUploadInput
+                          id="image-upload"
+                          type="file"
+                          accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+                          onChange={handleImageChange}
+                          disabled={uploadingImage || submitting}
+                        />
+                      </ImageUploadArea>
+                    </label>
+                  </ImageUploadLeft>
+                  <ImagePreviewRight>
+                    {imagePreview ? (
+                      <ImagePreviewContainer>
+                        <ImagePreview src={imagePreview} alt="Blog Preview" />
+                        <ImagePreviewOverlay>
+                          <RemoveImageButton
+                            type="button"
+                            onClick={handleRemoveImage}
+                          >
+                            Remove Image
+                          </RemoveImageButton>
+                        </ImagePreviewOverlay>
+                      </ImagePreviewContainer>
+                    ) : (
+                      <div style={{
+                        width: '415px',
+                        height: '280px',
+                        border: '2px dashed rgba(15, 35, 52, 0.16)',
+                        borderRadius: '12px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#999',
+                        fontSize: '14px',
+                        background: '#f8f9fa',
+                      }}>
+                        No image selected
+                      </div>
+                    )}
+                  </ImagePreviewRight>
+                </ImageUploadContainer>
+                {uploadingImage && (
+                  <div style={{ 
+                    textAlign: 'center', 
+                    padding: '12px', 
+                    fontSize: '14px', 
+                    color: '#666',
+                    background: 'rgba(2, 132, 137, 0.05)',
+                    borderRadius: '8px',
+                    marginTop: '16px'
+                  }}>
+                    ⏳ Uploading image... Please wait.
+                  </div>
                 )}
               </FormGroup>
 
@@ -405,9 +694,14 @@ const BlogData = () => {
                 <ActionButton
                   type="submit"
                   className="primary"
-                  disabled={submitting || editorTabOpen}
+                  disabled={submitting || editorTabOpen || uploadingImage}
                 >
-                  {editorTabOpen ? (
+                  {uploadingImage ? (
+                    <>
+                      <span style={{ marginRight: "8px" }}>⬆️</span>
+                      Uploading Image...
+                    </>
+                  ) : editorTabOpen ? (
                     <>
                       <span style={{ marginRight: "8px" }}>⏳</span>
                       Saving in Editor...
@@ -427,7 +721,8 @@ const BlogData = () => {
           </ModalContent>
         </ModalOverlay>
       )}
-    </BlogSection>
+      </BlogSection>
+    </>
   );
 };
 
