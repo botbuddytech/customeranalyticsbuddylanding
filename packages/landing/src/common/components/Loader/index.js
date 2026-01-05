@@ -1,38 +1,35 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import LoaderStyle from './loader.style';
+import React from "react";
+import {
+  LoaderContainer,
+  LoaderWrapper,
+  SpinnerCircle,
+  SpinnerDot,
+  LoaderText,
+  LoaderDots,
+} from "./loader.style";
 
-const Loader = ({ loaderColor, className, ...props }) => {
-  // Add all classs to an array
-  const addAllClasses = ['reusecore__loader'];
-
-  // className prop checking
-  if (className) {
-    addAllClasses.push(className);
-  }
+const Loader = ({ text, size = "medium" }) => {
   return (
-    <LoaderStyle
-      className={addAllClasses.join(' ')}
-      loaderColor={loaderColor}
-      {...props}
-    />
+    <LoaderContainer>
+      <LoaderWrapper>
+        <SpinnerCircle size={size}>
+          <SpinnerDot size={size} delay="0s" />
+          <SpinnerDot size={size} delay="0.2s" />
+          <SpinnerDot size={size} delay="0.4s" />
+        </SpinnerCircle>
+        {text && (
+          <LoaderText>
+            {text}
+            <LoaderDots>
+              <span>.</span>
+              <span>.</span>
+              <span>.</span>
+            </LoaderDots>
+          </LoaderText>
+        )}
+      </LoaderWrapper>
+    </LoaderContainer>
   );
 };
-
-Loader.propTypes = {
-  /** ClassName of the Loader */
-  className: PropTypes.string,
-
-  /** Set loader width in number || string */
-  width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-
-  /** Set loader height in number || string */
-  height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-
-  /** Set color for loader */
-  loaderColor: PropTypes.string,
-};
-
-Loader.defaultProps = {};
 
 export default Loader;
