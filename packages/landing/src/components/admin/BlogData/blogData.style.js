@@ -17,14 +17,23 @@ export const BlogHeader = styled.div`
   top: 0;
   background: #ffffff;
   z-index: 10;
-  padding: 20px 0 16px 0;
+  padding: 24px 36px 20px 36px;
   margin-top: -40px;
   margin-left: -36px;
   margin-right: -36px;
-  padding-left: 36px;
-  padding-right: 36px;
   border-bottom: 1px solid rgba(15, 35, 52, 0.08);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+  /* Cover the gap created by negative margin-top */
+  &::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    left: 0;
+    right: 0;
+    height: 40px;
+    background: #ffffff;
+  }
 
   h3 {
     font-size: 24px;
@@ -37,8 +46,12 @@ export const BlogHeader = styled.div`
     margin-top: -24px;
     margin-left: -20px;
     margin-right: -20px;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding: 20px 20px 16px 20px;
+
+    &::before {
+      top: -24px;
+      height: 24px;
+    }
   }
 `;
 

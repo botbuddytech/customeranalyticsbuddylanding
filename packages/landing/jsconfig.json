@@ -5,6 +5,13 @@
       "./node_modules/@types"
     ]
   },
+  "exclude": [
+    "node_modules",
+    ".next",
+    "out",
+    "build",
+    "dist"
+  ],
   "typeAcquisition": {
     "enable": true,
     "include": [

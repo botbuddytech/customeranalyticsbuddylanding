@@ -2,29 +2,32 @@ import styled from "styled-components";
 import { themeGet } from "@styled-system/theme-get";
 
 export const Section = styled.section`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  width: 100%;
+  height: 100vh;
   background-color: ${themeGet("colors.light", "#f8f9fa")};
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  padding-top: 100px; /* Account for sticky navbar */
+  box-sizing: border-box;
 
   @media only screen and (max-width: 768px) {
-    position: relative;
-    min-height: 100vh;
+    padding-top: 80px; /* Smaller padding on mobile */
   }
 `;
 
 export const DocumentationWrapper = styled.div`
   width: 100%;
-  height: 100%;
+  height: calc(100vh - 100px); /* Full height minus navbar padding */
   display: flex;
   flex-direction: column;
   overflow: hidden;
   padding: 0;
+  box-sizing: border-box;
+
+  @media only screen and (max-width: 768px) {
+    height: calc(100vh - 80px); /* Full height minus mobile navbar padding */
+  }
 `;
 
 export const Header = styled.header`
@@ -46,6 +49,7 @@ export const SplitLayout = styled.div`
   flex: 1;
   overflow: hidden;
   height: 100%;
+  min-height: 0; /* Important for grid children to respect height constraints */
   position: relative;
 
   @media only screen and (max-width: 1024px) {
@@ -56,6 +60,7 @@ export const SplitLayout = styled.div`
   @media only screen and (max-width: 768px) {
     grid-template-columns: 1fr;
     height: auto;
+    min-height: auto;
     flex-direction: column;
   }
 `;
@@ -71,6 +76,7 @@ export const Sidebar = styled.aside`
   overflow-y: auto;
   overflow-x: hidden;
   height: 100%;
+  min-height: 0; /* Important for grid children to respect height constraints */
   display: flex;
   flex-direction: column;
   position: relative;
@@ -292,7 +298,9 @@ export const ContentArea = styled.div`
   background: ${themeGet("colors.white", "#ffffff")};
   padding: 40px;
   overflow-y: auto;
+  overflow-x: hidden;
   height: 100%;
+  min-height: 0; /* Important for grid children to respect height constraints */
 
   @media only screen and (max-width: 768px) {
     padding: 30px 20px;

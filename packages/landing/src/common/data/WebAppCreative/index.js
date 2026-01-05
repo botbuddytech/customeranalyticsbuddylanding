@@ -72,6 +72,12 @@ export const menu_items = [
     staticLink: true,
   },
   {
+    label: "Documentation",
+    path: "/documentation",
+    offset: "0",
+    staticLink: true,
+  },
+  {
     label: "Contact",
     path: "/contact",
     offset: "0",
@@ -532,21 +538,26 @@ export const footerTop = {
         },
         {
           id: 2,
+          title: "Documentation",
+          link: "/documentation",
+        },
+        {
+          id: 3,
           title: "Customer Support",
           link: "#",
         },
         {
-          id: 3,
+          id: 4,
           title: "About Us",
           link: "#",
         },
         {
-          id: 4,
+          id: 5,
           title: "Copyright",
           link: "#",
         },
         {
-          id: 5,
+          id: 6,
           title: "Popular Campaign",
           link: "#",
         },

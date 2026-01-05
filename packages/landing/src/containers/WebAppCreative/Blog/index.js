@@ -8,12 +8,12 @@ import Text from 'common/components/Text';
 import Link from 'common/components/Link';
 
 import { posts } from 'common/data/WebAppCreative';
-import { Section, SectionHeading, Grid, Article } from './newsFeed.style';
+import { Section, SectionHeading, Grid, Article } from './blog.style';
 import { Fade } from 'react-awesome-reveal';
 
-const NewsFeed = () => {
+const Blog = () => {
   return (
-    <Section id="newsfeed">
+    <Section id="blog">
       <Container width="1400px">
         <SectionHeading>
           <Heading content="Blogs" />
@@ -37,4 +37,5 @@ const NewsFeed = () => {
   );
 };
 
-export default NewsFeed;
+export default Blog;
+
