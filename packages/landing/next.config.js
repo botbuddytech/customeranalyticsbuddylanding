@@ -59,6 +59,14 @@ const nextConfig = {
   experimental: {
     // optimizeCss: true, // Disabled due to critters dependency issues
   },
+
+  // API route body size limit (increase for image uploads)
+  api: {
+    bodyParser: {
+      sizeLimit: '10mb', // Increase limit for base64 image uploads
+    },
+    responseLimit: '10mb',
+  },
   
   // Webpack configuration for better builds
   webpack: (config, { isServer }) => {

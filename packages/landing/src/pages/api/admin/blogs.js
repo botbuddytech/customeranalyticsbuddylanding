@@ -12,7 +12,7 @@ export default async function handler(req, res) {
     }
 
     if (req.method === "POST") {
-      const { title, content, youtubeUrl } = req.body;
+      const { title, content, youtubeUrl, imageUrl } = req.body;
 
       if (!title || !content) {
         return res
@@ -27,6 +27,7 @@ export default async function handler(req, res) {
           title: title.trim(),
           slug,
           content: content.trim(),
+          imageUrl: imageUrl?.trim() || null,
           youtubeUrl: youtubeUrl?.trim() || null,
         },
       });

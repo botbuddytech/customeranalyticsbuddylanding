@@ -1,23 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Icon } from 'react-icons-kit';
-import { arrowRight } from 'react-icons-kit/feather/arrowRight';
 import Container from 'common/components/UI/Container';
 import Heading from 'common/components/Heading';
-import NextImage from 'common/components/NextImage';
-import Text from 'common/components/Text';
-import Link from 'common/components/Link';
 import Loader from 'common/components/Loader';
+import BlogCard from './BlogCard';
 
-// Import fallback blog images
-import post1 from 'common/assets/image/webAppCreative/post1.png';
-import post2 from 'common/assets/image/webAppCreative/post2.png';
-import post3 from 'common/assets/image/webAppCreative/post3.png';
-
-import { Section, SectionHeading, Grid, Article } from './blog.style';
-import { Fade } from 'react-awesome-reveal';
-
-// Fallback images array - cycle through available images
-const FALLBACK_IMAGES = [post1, post2, post3];
+import { Section, SectionHeading, Grid } from './blog.style';
 
 const Blog = () => {
   const [blogs, setBlogs] = useState([]);
@@ -48,19 +35,6 @@ const Blog = () => {
     }
   };
 
-  const formatDate = (dateString) => {
-    if (!dateString) return '';
-    try {
-      const date = new Date(dateString);
-      return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      });
-    } catch {
-      return dateString;
-    }
-  };
 
   if (loading) {
     return (
@@ -114,32 +88,9 @@ const Blog = () => {
           <Heading content="Blogs" />
         </SectionHeading>
         <Grid>
-          {blogs.map((blog, index) => {
-            // Cycle through fallback images based on index
-            const fallbackImage = FALLBACK_IMAGES[index % FALLBACK_IMAGES.length];
-            
-            return (
-              <Fade key={blog.id} direction='up' triggerOnce delay={index * 100}>
-                <Article>
-                  <NextImage 
-                    src={fallbackImage} 
-                    alt={blog.title}
-                    width={415}
-                    height={280}
-                  />
-                  <Text content={formatDate(blog.updatedAt || blog.createdAt)} />
-                  <Heading as="h4" content={blog.title} />
-                  <Link 
-                    href={`/documentation?topic=${blog.slug}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Read More <Icon icon={arrowRight} />
-                  </Link>
-                </Article>
-              </Fade>
-            );
-          })}
+          {blogs.map((blog, index) => (
+            <BlogCard key={blog.id} blog={blog} index={index} />
+          ))}
         </Grid>
       </Container>
     </Section>

@@ -16,6 +16,7 @@ export default async function handler(req, res) {
         id: true,
         title: true,
         slug: true,
+        imageUrl: true,
         // Don't include content in list - load individually
         createdAt: true,
         updatedAt: true,
