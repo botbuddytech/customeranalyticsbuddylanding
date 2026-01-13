@@ -223,7 +223,7 @@ export const dashboard = {
   tabs: [
     {
       id: 1,
-      title: "Customer Overview",
+      title: "Customer Dashboard",
       content: {
         image: dashboardImg1,
       },
