@@ -35,6 +35,12 @@ import facebook from "common/assets/image/webAppCreative/icons/facebook.png";
 import twitter from "common/assets/image/webAppCreative/icons/twitter.png";
 import dribbble from "common/assets/image/webAppCreative/icons/dribbble.png";
 
+// dashboard images
+import dashboardImg1 from "common/assets/image/dashboardImages/1.png";
+import dashboardImg2 from "common/assets/image/dashboardImages/2.png";
+import dashboardImg3 from "common/assets/image/dashboardImages/3.png";
+import dashboardImg4 from "common/assets/image/dashboardImages/4.png";
+
 export const menu_items = [
   {
     label: "Home",
@@ -217,30 +223,30 @@ export const dashboard = {
   tabs: [
     {
       id: 1,
-      title: "Custom Dashboard",
+      title: "Customer Dashboard",
       content: {
-        image: dashboardImg,
+        image: dashboardImg1,
       },
     },
     {
       id: 2,
-      title: "AI Audience Segmentation",
+      title: "AI Search Panel",
       content: {
-        image: dashboardImg,
+        image: dashboardImg2,
       },
     },
     {
       id: 3,
-      title: "Lists to Campaign",
+      title: "Segment Filters",
       content: {
-        image: dashboardImg,
+        image: dashboardImg3,
       },
     },
     {
       id: 4,
-      title: "Auto Updating Lists",
+      title: "Saved Segments",
       content: {
-        image: dashboardImg,
+        image: dashboardImg4,
       },
     },
   ],
