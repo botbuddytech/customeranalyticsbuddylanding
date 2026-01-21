@@ -81,15 +81,56 @@ export const SwitcherWrapper = styled.div`
 export const Grid = styled.div`
   gap: 20px;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: ${props => {
+    const count = props.itemCount || 1;
+    // If only one item, center it with max-width
+    if (count === 1) {
+      return '1fr';
+    }
+    // If 2 items, use 2 columns
+    if (count === 2) {
+      return 'repeat(2, 1fr)';
+    }
+    // If 3 items, use 3 columns
+    if (count === 3) {
+      return 'repeat(3, 1fr)';
+    }
+    // 4 or more items, use 4 columns
+    return 'repeat(4, 1fr)';
+  }};
   justify-content: center;
+  justify-items: ${props => props.itemCount === 1 ? 'center' : 'stretch'};
+  max-width: ${props => {
+    const count = props.itemCount || 1;
+    // Center single item with reasonable max-width
+    if (count === 1) {
+      return '400px';
+    }
+    return '100%';
+  }};
+  margin: ${props => props.itemCount === 1 ? '0 auto' : '0'};
+  
   @media screen and (max-width: 1024px) {
     gap: 16px;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: ${props => {
+      const count = props.itemCount || 1;
+      if (count === 1) {
+        return '1fr';
+      }
+      return 'repeat(2, 1fr)';
+    }};
+    max-width: ${props => {
+      const count = props.itemCount || 1;
+      if (count === 1) {
+        return '400px';
+      }
+      return '100%';
+    }};
   }
   @media screen and (max-width: 480px) {
     grid-template-columns: 1fr;
     gap: 24px;
+    max-width: 100%;
   }
 `;
 

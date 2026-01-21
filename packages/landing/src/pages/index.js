@@ -104,7 +104,7 @@ const webAppCreative = () => {
 		  <HowItWorks /> */}
           <AnalyticsTool />
           <AnalyticsTools2 />
-          <Testimonials />
+          {/* <Testimonials /> */}
           <Faq />
           <CombinedSection>
             {/* <Integrations /> */}
