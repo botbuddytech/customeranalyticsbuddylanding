@@ -41,7 +41,7 @@ const Pricing = () => {
           </span>
           <button className={!isMonthly ? 'active' : undefined}>Yearly</button>
         </SwitcherWrapper>
-        <Grid>
+        <Grid itemCount={pricing.length}>
           {pricing.map((priceTable) => (
             <Fade key={priceTable.id} direction='up' triggerOnce delay={priceTable.id * 100}>
               <PriceTable
