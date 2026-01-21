@@ -77,7 +77,7 @@ const BlogCard = ({ blog, index }) => {
         <Text content={formatDate(blog.updatedAt || blog.createdAt)} />
         <Heading as="h4" content={blog.title} />
         <Link 
-          href={`/documentation?topic=${blog.slug}`}
+          href={`/blog/${blog.slug}`}
           target="_blank"
           rel="noopener noreferrer"
         >

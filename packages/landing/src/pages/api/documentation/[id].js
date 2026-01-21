@@ -8,19 +8,18 @@ export default async function handler(req, res) {
   const { id } = req.query;
 
   if (!id) {
-    return res.status(400).json({ message: "Invalid blog slug" });
+    return res.status(400).json({ message: "Invalid documentation slug" });
   }
 
   try {
     // Try to find by slug first (URL-friendly), fallback to ID for backward compatibility
-    let blog = await prisma.blog.findUnique({
+    let doc = await prisma.documentation.findUnique({
       where: { slug: id },
       select: {
         id: true,
         title: true,
         slug: true,
         content: true,
-        imageUrl: true,
         youtubeUrl: true,
         createdAt: true,
         updatedAt: true,
@@ -28,15 +27,14 @@ export default async function handler(req, res) {
     });
 
     // Fallback to ID if slug not found (for backward compatibility)
-    if (!blog && !isNaN(parseInt(id))) {
-      blog = await prisma.blog.findUnique({
+    if (!doc && !isNaN(parseInt(id))) {
+      doc = await prisma.documentation.findUnique({
         where: { id: parseInt(id) },
         select: {
           id: true,
           title: true,
           slug: true,
           content: true,
-          imageUrl: true,
           youtubeUrl: true,
           createdAt: true,
           updatedAt: true,
@@ -44,16 +42,15 @@ export default async function handler(req, res) {
       });
     }
 
-    if (!blog) {
-      return res.status(404).json({ message: "Blog not found" });
+    if (!doc) {
+      return res.status(404).json({ message: "Documentation not found" });
     }
 
-    return res.status(200).json({ blog });
+    return res.status(200).json({ documentation: doc });
   } catch (error) {
-    console.error("Blog fetch error:", error);
+    console.error("Documentation fetch error:", error);
     return res
       .status(500)
-      .json({ message: "Unable to load blog. Please try again later." });
+      .json({ message: "Unable to load documentation. Please try again later." });
   }
 }
-
