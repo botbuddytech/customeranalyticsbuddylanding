@@ -31,8 +31,8 @@ import {
 const Documentation = () => {
   const router = useRouter();
   const { topic } = router.query;
-  const [blogs, setBlogs] = useState([]);
-  const [selectedBlog, setSelectedBlog] = useState(null);
+  const [documentation, setDocumentation] = useState([]);
+  const [selectedDoc, setSelectedDoc] = useState(null);
   const [loading, setLoading] = useState(true);
   const [contentLoading, setContentLoading] = useState(false);
   const [error, setError] = useState("");
@@ -47,86 +47,86 @@ const Documentation = () => {
   const [isResizing, setIsResizing] = useState(false);
   const resizeRef = useRef(null);
 
-  // Fetch blog list (titles only)
+  // Fetch documentation list (titles only)
   useEffect(() => {
-    fetchBlogList();
+    fetchDocumentationList();
   }, []);
 
-  // Load blog from URL or select first one
+  // Load documentation from URL or select first one
   useEffect(() => {
-    if (blogs.length > 0 && !contentLoading) {
+    if (documentation.length > 0 && !contentLoading) {
       if (topic) {
         if (
-          !selectedBlog ||
-          (selectedBlog.slug !== topic && selectedBlog.id.toString() !== topic)
+          !selectedDoc ||
+          (selectedDoc.slug !== topic && selectedDoc.id.toString() !== topic)
         ) {
-          fetchBlogContent(topic);
+          fetchDocumentationContent(topic);
         }
-      } else if (!selectedBlog) {
-        // Auto-select first blog if no topic in URL (after sorting)
-        const sorted = [...blogs].sort((a, b) =>
+      } else if (!selectedDoc) {
+        // Auto-select first documentation if no topic in URL (after sorting)
+        const sorted = [...documentation].sort((a, b) =>
           sortOrder === "newest" ? b.id - a.id : a.id - b.id
         );
         if (sorted.length > 0) {
-          handleBlogSelect(sorted[0]);
+          handleDocSelect(sorted[0]);
         }
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [blogs, topic, sortOrder]);
+  }, [documentation, topic, sortOrder]);
 
-  const fetchBlogList = async () => {
+  const fetchDocumentationList = async () => {
     try {
       setLoading(true);
-      const response = await fetch("/api/blogs");
+      const response = await fetch("/api/documentation");
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Failed to load blogs");
+        throw new Error(data.message || "Failed to load documentation");
       }
 
-      const fetchedBlogs = data.blogs || [];
-      setBlogs(fetchedBlogs);
+      const fetchedDocs = data.documentation || [];
+      setDocumentation(fetchedDocs);
       setError("");
     } catch (err) {
-      setError(err.message || "Failed to load blogs");
+      setError(err.message || "Failed to load documentation");
     } finally {
       setLoading(false);
     }
   };
 
-  const fetchBlogContent = async (slugOrId) => {
+  const fetchDocumentationContent = async (slugOrId) => {
     try {
       setContentLoading(true);
-      const response = await fetch(`/api/blogs/${slugOrId}`);
+      const response = await fetch(`/api/documentation/${slugOrId}`);
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Failed to load blog content");
+        throw new Error(data.message || "Failed to load documentation content");
       }
 
-      setSelectedBlog(data.blog);
+      setSelectedDoc(data.documentation);
       setError("");
     } catch (err) {
-      setError(err.message || "Failed to load blog content");
+      setError(err.message || "Failed to load documentation content");
     } finally {
       setContentLoading(false);
     }
   };
 
-  const handleBlogSelect = (blog) => {
-    const slug = blog.slug || blog.id;
+  const handleDocSelect = (doc) => {
+    const slug = doc.slug || doc.id;
     // Update URL without page reload using slug
     router.push(`/documentation?topic=${slug}`, undefined, { shallow: true });
-    fetchBlogContent(slug);
+    fetchDocumentationContent(slug);
   };
 
   const handleSortChange = (e) => {
     setSortOrder(e.target.value);
   };
 
-  // Sort blogs based on selected order (by ID)
-  const sortedBlogs = [...blogs].sort((a, b) => {
+  // Sort documentation based on selected order (by ID)
+  const sortedDocs = [...documentation].sort((a, b) => {
     if (sortOrder === "newest") {
       return b.id - a.id; // Highest ID first (newest)
     } else {
@@ -198,9 +198,9 @@ const Documentation = () => {
   }, [isResizing, handleMouseMove, handleMouseUp]);
 
   const handleShare = async () => {
-    if (!selectedBlog) return;
+    if (!selectedDoc) return;
 
-    const slug = selectedBlog.slug || selectedBlog.id;
+    const slug = selectedDoc.slug || selectedDoc.id;
     const url = `${window.location.origin}/documentation?topic=${slug}`;
 
     try {
@@ -241,7 +241,7 @@ const Documentation = () => {
       return <Loader text="Loading content..." />;
     }
 
-    if (!selectedBlog) {
+    if (!selectedDoc) {
       return (
         <EmptyState>
           <p>Select a topic from the sidebar to view documentation.</p>
@@ -249,7 +249,7 @@ const Documentation = () => {
       );
     }
 
-    const embedUrl = getYouTubeEmbedUrl(selectedBlog.youtubeUrl);
+    const embedUrl = getYouTubeEmbedUrl(selectedDoc.youtubeUrl);
 
     return (
       <>
@@ -261,7 +261,7 @@ const Documentation = () => {
             marginBottom: "24px",
           }}
         >
-          <ContentTitle>{selectedBlog.title}</ContentTitle>
+          <ContentTitle>{selectedDoc.title}</ContentTitle>
           <ShareButton onClick={handleShare} title="Share this topic">
             <svg
               width="20"
@@ -281,7 +281,7 @@ const Documentation = () => {
           <VideoContainer>
             <iframe
               src={embedUrl}
-              title={selectedBlog.title}
+              title={selectedDoc.title}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             />
@@ -289,7 +289,7 @@ const Documentation = () => {
         )}
         <ContentText>
           <ReactMarkdown remarkPlugins={[remarkGfm]}>
-            {selectedBlog.content}
+            {selectedDoc.content}
           </ReactMarkdown>
         </ContentText>
       </>
@@ -335,10 +335,10 @@ const Documentation = () => {
             <SidebarHeader>
               <SidebarTitle>Documentation</SidebarTitle>
               <SidebarSubtitle>
-                {blogs.length} {blogs.length === 1 ? "topic" : "topics"}{" "}
+                {documentation.length} {documentation.length === 1 ? "topic" : "topics"}{" "}
                 available
               </SidebarSubtitle>
-              {blogs.length > 0 && (
+              {documentation.length > 0 && (
                 <SortControl>
                   <label htmlFor="sort-select">Sort:</label>
                   <SortSelect
@@ -352,22 +352,22 @@ const Documentation = () => {
                 </SortControl>
               )}
             </SidebarHeader>
-            {blogs.length === 0 ? (
+            {documentation.length === 0 ? (
               <EmptyState>
                 <p>No documentation available yet.</p>
               </EmptyState>
             ) : (
               <BlogList>
-                {sortedBlogs.map((blog) => (
-                  <BlogListItem key={blog.id}>
+                {sortedDocs.map((doc) => (
+                  <BlogListItem key={doc.id}>
                     <BlogListButton
                       active={
-                        selectedBlog?.id === blog.id ||
-                        selectedBlog?.slug === blog.slug
+                        selectedDoc?.id === doc.id ||
+                        selectedDoc?.slug === doc.slug
                       }
-                      onClick={() => handleBlogSelect(blog)}
+                      onClick={() => handleDocSelect(doc)}
                     >
-                      {blog.title}
+                      {doc.title}
                     </BlogListButton>
                   </BlogListItem>
                 ))}
