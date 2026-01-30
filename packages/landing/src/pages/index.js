@@ -98,8 +98,9 @@ const webAppCreative = () => {
             </DrawerProvider>
           </Sticky>
           <Banner />
-          <IntroVideo />
+          {/* <IntroVideo /> */}
           <Dashboard />
+          
           {/* <Clients />
 		  <HowItWorks /> */}
           <AnalyticsTool />
