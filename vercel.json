@@ -2,6 +2,6 @@
   "version": 2,
   "buildCommand": "cd packages/landing && yarn build",
   "outputDirectory": "packages/landing/.next",
-  "installCommand": "yarn install --frozen-lockfile",
+  "installCommand": "yarn install",
   "framework": "nextjs"
 }
